@@ -18,7 +18,9 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule.forRoot(),
     MongooseModule.forRoot(
       //'mongodb://localhost:27017/pcdigaScrapper?directConnection=true',
-      'mongodb+srv://jorge:jorge@cluster0.f1efp.mongodb.net/?retryWrites=true&w=majority',
+      //const CONCURRENCY = process.env.WEB_CONCURRENCY || 1;
+      //'mongodb+srv://jorge:jorge@cluster0.f1efp.mongodb.net/pcdigaScrapper?retryWrites=true&w=majority',
+      process.env.MONGO_DB || 'mongodb+srv://jorge:jorge@cluster0.f1efp.mongodb.net/pcdigaScrapper?retryWrites=true&w=majority',
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
