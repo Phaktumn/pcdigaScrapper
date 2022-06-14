@@ -16,7 +16,7 @@ export class ThirdPartyEmailService {
       Name: name,
       Url: url,
       Current: prices.currentPrice.toString(),
-      Original: prices.originalPrice.toString()
+      Original: prices.originalPrice.toString(),
     };
   }
 }

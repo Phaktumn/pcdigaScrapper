@@ -22,7 +22,17 @@ export class ProductsService {
   ) {}
 
   async getProductByEan(ean: string): Promise<Product> {
-    return await this.productModel.findOne({ 'ean': ean }, { '_id': 0, 'prices._id': 0, 'created_at': 0, 'updated_at': 0, "prices.createdAt": 0, "prices.updatedAt": 0 });
+    return await this.productModel.findOne(
+      { ean: ean },
+      {
+        _id: 0,
+        'prices._id': 0,
+        created_at: 0,
+        updated_at: 0,
+        'prices.createdAt': 0,
+        'prices.updatedAt': 0,
+      },
+    );
   }
 
   async createProduct(productUrl: string): Promise<Product> {

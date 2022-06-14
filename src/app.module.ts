@@ -15,12 +15,14 @@ import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    
     ConfigModule.forRoot(),
-    MongooseModule.forRoot('mongodb://localhost:27017/pcdigaScrapper?directConnection=true', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }),
+    MongooseModule.forRoot(
+      'mongodb://localhost:27017/pcdigaScrapper?directConnection=true',
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      },
+    ),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       typePaths: ['./**/*.graphql'],
       driver: ApolloDriver,

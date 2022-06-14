@@ -2,13 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { Product } from './graphql-schema';
 import { ProductsService } from './products/products.service';
 
-
 @Injectable()
 export class AppService {
   /**
    *
    */
-  constructor(private readonly ProductsService: ProductsService) { }
+  constructor(private readonly ProductsService: ProductsService) {}
   getHello(): string {
     return 'Hello World!';
   }
