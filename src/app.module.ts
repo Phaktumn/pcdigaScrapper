@@ -17,7 +17,8 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
     ConfigModule.forRoot(),
     MongooseModule.forRoot(
-      'mongodb://localhost:27017/pcdigaScrapper?directConnection=true',
+      //'mongodb://localhost:27017/pcdigaScrapper?directConnection=true',
+      'mongodb+srv://jorge:jorge@cluster0.f1efp.mongodb.net/?retryWrites=true&w=majority',
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
