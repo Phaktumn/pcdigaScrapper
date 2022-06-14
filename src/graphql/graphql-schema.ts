@@ -59,6 +59,16 @@ export class ProductPrice {
   createdAt: string;
 }
 
+export class ProductFilter {
+  ean: string;
+  name: string;
+  url: string;
+  priceMin: number;
+  priceMax: number;
+  updatedAt: string;
+  createdAt: string;
+}
+
 export abstract class IQuery {
   abstract getProduct(
     url: string,

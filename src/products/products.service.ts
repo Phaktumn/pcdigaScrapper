@@ -1,16 +1,17 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import {
   calculateDiscountPercentage,
   isCurrentMonthAndYear,
   isOlderThan24Hours,
 } from 'src/common/utils';
-import { Product } from 'src/graphql/graphql-schema';
+import { Product, ProductFilter } from 'src/graphql/graphql-schema';
 import { ScraperService } from 'src/scraper/scraper.service';
 import { ENTITIES_KEY } from 'src/shared';
 import * as _ from 'lodash';
 import { ThirdPartyEmailService } from 'src/third-party/third-party.service';
+import { Console } from 'console';
 
 @Injectable()
 export class ProductsService {
@@ -19,7 +20,7 @@ export class ProductsService {
     private productModel: Model<Product>,
     private scraperService: ScraperService,
     private readonly sendgridService: ThirdPartyEmailService,
-  ) {}
+  ) { }
 
   async getProductByEan(ean: string): Promise<Product> {
     return await this.productModel.findOne(
@@ -27,12 +28,30 @@ export class ProductsService {
       {
         _id: 0,
         'prices._id': 0,
-        created_at: 0,
-        updated_at: 0,
+        'created_at': 0,
+        'updated_at': 0,
         'prices.createdAt': 0,
         'prices.updatedAt': 0,
       },
     );
+  }
+
+  async productExists(url: string, ean: string): Promise<boolean> {
+    if (!url && !ean) {
+      throw new HttpException(
+        'ERROR.PARAMS_NOT_VALID',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    let filter: FilterQuery<Product> = {};
+    if (ean) {
+      filter = { 'ean': ean };
+    }
+    else {
+      filter = { 'url': url };
+    }
+    return await this.productModel.exists(filter);
   }
 
   async createProduct(productUrl: string): Promise<Product> {
@@ -92,6 +111,23 @@ export class ProductsService {
     return product;
   }
 
+  async getProductMatch(filter: any): Promise<Product[]> {
+    const computedFilter = {
+      $and: [
+        filter.name !== undefined ? { 'name': { $regex: '.*' + (filter.name as String | '' ) + '.*' } } : {},
+        filter.url !== undefined ? { 'url': { $regex: '.*' + (filter.url as String | '') + '.*' } } : {},
+        filter.ean !== undefined ? { 'ean': { $regex: '.*' + (filter.ean as String | '') + '.*' } } : {},
+        {
+          $or: [
+            { 'prices.currentPrice': { $lte: filter.priceMin | Number.MAX_SAFE_INTEGER } },
+            { 'prices.currentPrice': { $gte: filter.priceMax | 0 } }
+          ]
+        }
+      ],
+    };
+    return await this.productModel.find(computedFilter);
+  }
+
   async getProduct(url: string, date: string): Promise<Product> {
     let priceDate;
 
@@ -147,9 +183,9 @@ export class ProductsService {
       return await this.getPrices(url);
     }
 
-    const { ean, name, prices } = _.head(product);
+    // const { ean, name, prices } = _.head(product);
 
-    this.sendgridService.send(ean, name, url, _.head(prices));
+    //var res = this.sendgridService.send(ean, name, url, _.head(prices));
 
     return _.head(product);
   }

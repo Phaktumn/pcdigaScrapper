@@ -1,0 +1,492 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>pcdiga-scraper-backend documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="../" class="navbar-brand">pcdiga-scraper-backend documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content miscellaneous-variables">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li>Miscellaneous</li>
+  <li>Variables</li>
+</ol>
+
+<section>
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <ul class="index-list">
+                        <li>
+                            <a href="#AutoSearchSchema" title="src/autosearch/products.model.ts" ><b>AutoSearchSchema</b>&nbsp;&nbsp;&nbsp;(src/.../products.model.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#calculateDiscountPercentage" title="src/common/utils.ts" ><b>calculateDiscountPercentage</b>&nbsp;&nbsp;&nbsp;(src/.../utils.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#definitionsFactory" title="src/graphql/generate-typings.ts" ><b>definitionsFactory</b>&nbsp;&nbsp;&nbsp;(src/.../generate-typings.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ENV_VARIABLES" title="src/config/env.ts" ><b>ENV_VARIABLES</b>&nbsp;&nbsp;&nbsp;(src/.../env.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#isCurrentMonthAndYear" title="src/common/utils.ts" ><b>isCurrentMonthAndYear</b>&nbsp;&nbsp;&nbsp;(src/.../utils.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#isOlderThan24Hours" title="src/common/utils.ts" ><b>isOlderThan24Hours</b>&nbsp;&nbsp;&nbsp;(src/.../utils.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ProductPriceSchema" title="src/products/products.model.ts" ><b>ProductPriceSchema</b>&nbsp;&nbsp;&nbsp;(src/.../products.model.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ProductSchema" title="src/products/products.model.ts" ><b>ProductSchema</b>&nbsp;&nbsp;&nbsp;(src/.../products.model.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#scrapedNowEmail" title="src/third-party/emails/scraped-now.ts" ><b>scrapedNowEmail</b>&nbsp;&nbsp;&nbsp;(src/.../scraped-now.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#transformPricesToNumber" title="src/common/utils.ts" ><b>transformPricesToNumber</b>&nbsp;&nbsp;&nbsp;(src/.../utils.ts)</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    <h3>src/autosearch/products.model.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="AutoSearchSchema"></a>
+                    <span class="name">
+                        <span ><b>AutoSearchSchema</b></span>
+                        <a href="#AutoSearchSchema"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new mongoose.Schema(
+  {
+    isActive: Boolean,
+    url: String,
+  },
+  { timestamps: true, versionKey: false },
+)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/common/utils.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="calculateDiscountPercentage"></a>
+                    <span class="name">
+                        <span ><b>calculateDiscountPercentage</b></span>
+                        <a href="#calculateDiscountPercentage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(
+  priceDifference: number,
+  originalPrice: number,
+): number &#x3D;&gt; +((priceDifference / originalPrice) * 100).toFixed(2)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isCurrentMonthAndYear"></a>
+                    <span class="name">
+                        <span ><b>isCurrentMonthAndYear</b></span>
+                        <a href="#isCurrentMonthAndYear"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(lastUpdateDate: Date): boolean &#x3D;&gt; {
+  if (!lastUpdateDate) return false;
+
+  return (
+    lastUpdateDate.getMonth() &#x3D;&#x3D;&#x3D; new Date().getMonth() &amp;&amp;
+    lastUpdateDate.getFullYear() &#x3D;&#x3D;&#x3D; new Date().getFullYear()
+  );
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isOlderThan24Hours"></a>
+                    <span class="name">
+                        <span ><b>isOlderThan24Hours</b></span>
+                        <a href="#isOlderThan24Hours"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(lastUpdateDate: Date): boolean &#x3D;&gt; {
+  return lastUpdateDate.getTime() &lt; Date.now() - 86400000;
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="transformPricesToNumber"></a>
+                    <span class="name">
+                        <span ><b>transformPricesToNumber</b></span>
+                        <a href="#transformPricesToNumber"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(price: string): number &#x3D;&gt;
+  +price.replace(/(\d+),(\d+).*/, &#x27;$1.$2&#x27;).replace(/[^0-9.]/g, &#x27;&#x27;)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/graphql/generate-typings.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="definitionsFactory"></a>
+                    <span class="name">
+                        <span ><b>definitionsFactory</b></span>
+                        <a href="#definitionsFactory"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new GraphQLDefinitionsFactory()</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/config/env.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ENV_VARIABLES"></a>
+                    <span class="name">
+                        <span ><b>ENV_VARIABLES</b></span>
+                        <a href="#ENV_VARIABLES"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+  APP_SEND_GRID_API: process.env.APP_SEND_GRID_API_KEY,
+  APP_SEND_GRID_MY_EMAIL: process.env.APP_SEND_GRID_MY_EMAIL,
+  APP_SEND_GRID_FROM_EMAIL: process.env.APP_SEND_GRID_FROM_EMAIL,
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/products/products.model.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ProductPriceSchema"></a>
+                    <span class="name">
+                        <span ><b>ProductPriceSchema</b></span>
+                        <a href="#ProductPriceSchema"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new mongoose.Schema(
+  {
+    currentPrice: Number,
+    originalPrice: Number,
+    priceDifference: Number,
+    isOnDiscount: Boolean,
+    discountPercentage: Number,
+  },
+  { timestamps: true, versionKey: false },
+)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ProductSchema"></a>
+                    <span class="name">
+                        <span ><b>ProductSchema</b></span>
+                        <a href="#ProductSchema"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new mongoose.Schema(
+  {
+    ean: String,
+    name: String,
+    url: String,
+    prices: [{ type: ProductPriceSchema }],
+  },
+  { timestamps: true, versionKey: false },
+)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/third-party/emails/scraped-now.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="scrapedNowEmail"></a>
+                    <span class="name">
+                        <span ><b>scrapedNowEmail</b></span>
+                        <a href="#scrapedNowEmail"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(
+  name: string,
+  url: string,
+  price: string,
+  previousPrice: string,
+) &#x3D;&gt; {
+  return &#x60;
+  &lt;td class&#x3D;&quot;esd-stripe&quot; align&#x3D;&quot;center&quot;&gt;
+  &lt;table class&#x3D;&quot;es-content-body&quot; width&#x3D;&quot;600&quot; cellspacing&#x3D;&quot;0&quot; cellpadding&#x3D;&quot;0&quot; bgcolor&#x3D;&quot;#ffffff&quot; align&#x3D;&quot;center&quot;&gt;
+      &lt;td class&#x3D;&quot;esd-block-image es-p20b&quot; style&#x3D;&quot;font-size: 0px;&quot; align&#x3D;&quot;center&quot;&gt;
+          &lt;a target&#x3D;&quot;_blank&quot;&gt;&lt;img
+                  src&#x3D;&quot;https://jikdpb.stripocdn.email/content/guids/CABINET_0307ef087ed932f22bc8c92ac36d7822/images/untitled1.png&quot;
+                  alt&#x3D;&quot;Logo&quot; style&#x3D;&quot;display: block; font-size: 12px;&quot; title&#x3D;&quot;Logo&quot; width&#x3D;&quot;200&quot;&gt;&lt;/a&gt;
+      &lt;/td&gt;
+      &lt;tbody&gt;
+          &lt;tr&gt;
+              &lt;td class&#x3D;&quot;esd-structure es-p30t es-p10b es-p20r es-p20l&quot; align&#x3D;&quot;left&quot;&gt;
+                  &lt;table width&#x3D;&quot;100%&quot; cellspacing&#x3D;&quot;0&quot; cellpadding&#x3D;&quot;0&quot;&gt;
+                      &lt;tbody&gt;
+                          &lt;tr&gt;
+                              &lt;td class&#x3D;&quot;esd-container-frame&quot; width&#x3D;&quot;560&quot; valign&#x3D;&quot;top&quot; align&#x3D;&quot;center&quot;&gt;
+                                  &lt;table width&#x3D;&quot;100%&quot; cellspacing&#x3D;&quot;0&quot; cellpadding&#x3D;&quot;0&quot;&gt;
+                                      &lt;tbody&gt;
+                                          &lt;tr&gt;
+                                              &lt;td class&#x3D;&quot;esd-block-text es-p10b es-m-txt-c&quot; align&#x3D;&quot;center&quot;&gt;
+                                                  &lt;h1 style&#x3D;&quot;font-size: 46px; line-height: 100%;&quot;&gt;&lt;b&gt;${name}&lt;/b&gt;&lt;/h1&gt;
+                                              &lt;/td&gt;
+                                          &lt;/tr&gt;
+                                          &lt;tr&gt;
+                                              &lt;td class&#x3D;&quot;esd-block-text es-p10t es-p10b es-m-txt-c&quot; align&#x3D;&quot;center&quot;&gt;
+                                                  &lt;h1&gt;&lt;strong&gt;Price History&lt;/strong&gt;&lt;/h1&gt;
+                                                  &lt;h2&gt;&lt;strong&gt;Before: ${previousPrice}&lt;/strong&gt;&lt;/h2&gt;
+                                                  &lt;h2&gt;&lt;strong&gt;Now: ${price}&lt;/strong&gt;&lt;/h2&gt;
+                                              &lt;/td&gt;
+                                          &lt;/tr&gt;
+                                          &lt;tr&gt;
+                                              &lt;td class&#x3D;&quot;esd-block-button&quot; align&#x3D;&quot;center&quot;&gt; &lt;span
+                                                      class&#x3D;&quot;es-button-border&quot;&gt;
+                                                      &lt;a href&#x3D;&quot;${url}&quot;
+                                                          class&#x3D;&quot;es-button&quot; target&#x3D;&quot;_blank&quot;&gt;Product Page&lt;/a&gt;
+                                                  &lt;/span&gt; &lt;/td&gt;
+                                          &lt;/tr&gt;
+                                          &lt;tr&gt;
+                                              &lt;td class&#x3D;&quot;esd-block-button&quot; align&#x3D;&quot;center&quot;&gt; &lt;span
+                                                      class&#x3D;&quot;es-button-border&quot;&gt;
+                                                      &lt;a href&#x3D;&quot;https://github.com/flav1o/scraper-pcdiga&quot;
+                                                          class&#x3D;&quot;es-button&quot; target&#x3D;&quot;_blank&quot;&gt;Project Code&lt;/a&gt;
+                                                  &lt;/span&gt; &lt;/td&gt;
+                                          &lt;/tr&gt;
+                                          &lt;tr&gt;
+                                              &lt;td class&#x3D;&quot;esd-block-text es-p5t es-p5b es-p5r es-m-p0r&quot; align&#x3D;&quot;left&quot;&gt;
+                                                  &lt;p&gt;Kind regards,&lt;/p&gt;
+                                                  &lt;p&gt;flav1o - PcDiga Scraper&lt;/p&gt;
+                                              &lt;/td&gt;
+                                          &lt;/tr&gt;
+                                      &lt;/tbody&gt;
+                                  &lt;/table&gt;
+                              &lt;/td&gt;
+                          &lt;/tr&gt;
+                      &lt;/tbody&gt;
+                  &lt;/table&gt;
+              &lt;/td&gt;
+          &lt;/tr&gt;
+      &lt;/tbody&gt;
+  &lt;/table&gt;
+&lt;/td&gt;
+    &#x60;;
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'miscellaneous-variables';
+            var COMPODOC_CURRENT_PAGE_URL = 'variables.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
