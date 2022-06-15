@@ -5,6 +5,7 @@ import {
   calculateDiscountPercentage,
   isCurrentMonthAndYear,
   isOlderThan24Hours,
+  isOlderThan
 } from 'src/common/utils';
 import { Product, ProductFilter } from 'src/graphql/graphql-schema';
 import { ScraperService } from 'src/scraper/scraper.service';
@@ -20,6 +21,15 @@ export class ProductsService {
     private scraperService: ScraperService,
     private readonly sendgridService: ThirdPartyEmailService,
   ) { }
+
+  async scrapeProducts(url: string): Promise<Product> {
+    let prod: any = await this.getProduct(url, null);
+    if (prod === null)
+      return await this.createProduct(url);
+    return isOlderThan(new Date(prod.updatedAt), 1, 0)
+      ? await this.getPrices(url)
+      : prod
+  }
 
   async getProductByEan(ean: string): Promise<Product> {
     return await this.productModel.findOne(
@@ -159,7 +169,7 @@ export class ProductsService {
       ])
       .exec();
 
-    if (product.length === 0) return await this.createProduct(url);
+    if (product.length === 0) return null;//return await this.createProduct(url);
 
     if (
       isOlderThan24Hours(_.head(product).updatedAt) &&

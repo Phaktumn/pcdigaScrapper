@@ -34,6 +34,7 @@
     "@nestjs/mongoose": "^8.0.1",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/schedule": "^1.1.0",
+    "@nestjs/swagger": "^5.2.1",
     "@sendgrid/mail": "^7.7.0",
     "@types/cron": "^1.7.3",
     "apollo-server-express": "^3.6.7",
@@ -49,6 +50,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
+    "swagger-ui-express": "^4.4.0",
     "ts-morph": "^14.0.0"
   },
   "devDependencies": {

@@ -12,6 +12,7 @@ export class AppService {
   getHello(): string {
     return 'Hello World!';
   }
+  
   async getProduct(ean: string): Promise<Product> {
     return await this.ProductsService.getProductByEan(ean);
   }
@@ -24,5 +25,9 @@ export class AppService {
     if (await this.ProductsService.productExists(url, ean))
       return { message: 'Product already exists' };
     return await this.ProductsService.getProduct(url, Date.now.toString());
+  }
+
+  async createOrUpdateProd(url: string): Promise<Product> {
+    return await this.ProductsService.scrapeProducts(url);
   }
 }
