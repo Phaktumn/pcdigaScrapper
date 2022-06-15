@@ -8,10 +8,9 @@ import {
 } from 'src/common/utils';
 import { Product, ProductFilter } from 'src/graphql/graphql-schema';
 import { ScraperService } from 'src/scraper/scraper.service';
-import { ENTITIES_KEY } from 'src/shared';
+import { ENTITIES_KEY, IgnoredProps } from 'src/shared';
 import * as _ from 'lodash';
 import { ThirdPartyEmailService } from 'src/third-party/third-party.service';
-import { Console } from 'console';
 
 @Injectable()
 export class ProductsService {
@@ -25,14 +24,7 @@ export class ProductsService {
   async getProductByEan(ean: string): Promise<Product> {
     return await this.productModel.findOne(
       { ean: ean },
-      {
-        _id: 0,
-        'prices._id': 0,
-        'created_at': 0,
-        'updated_at': 0,
-        'prices.createdAt': 0,
-        'prices.updatedAt': 0,
-      },
+      IgnoredProps,
     );
   }
 
@@ -43,14 +35,7 @@ export class ProductsService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-
-    let filter: FilterQuery<Product> = {};
-    if (ean) {
-      filter = { 'ean': ean };
-    }
-    else {
-      filter = { 'url': url };
-    }
+    let filter: FilterQuery<Product> = ean ? { 'ean': ean } : { 'url': url };
     return await this.productModel.exists(filter);
   }
 
@@ -114,7 +99,7 @@ export class ProductsService {
   async getProductMatch(filter: any): Promise<Product[]> {
     const computedFilter = {
       $and: [
-        filter.name !== undefined ? { 'name': { $regex: '.*' + (filter.name as String | '' ) + '.*' } } : {},
+        filter.name !== undefined ? { 'name': { $regex: '.*' + (filter.name as String | '') + '.*' } } : {},
         filter.url !== undefined ? { 'url': { $regex: '.*' + (filter.url as String | '') + '.*' } } : {},
         filter.ean !== undefined ? { 'ean': { $regex: '.*' + (filter.ean as String | '') + '.*' } } : {},
         {
@@ -125,7 +110,7 @@ export class ProductsService {
         }
       ],
     };
-    return await this.productModel.find(computedFilter);
+    return await this.productModel.find(computedFilter, IgnoredProps);
   }
 
   async getProduct(url: string, date: string): Promise<Product> {

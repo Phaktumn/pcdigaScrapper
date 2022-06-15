@@ -17,10 +17,7 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
     ConfigModule.forRoot(),
     MongooseModule.forRoot(
-      //'mongodb://localhost:27017/pcdigaScrapper?directConnection=true',
-      //const CONCURRENCY = process.env.WEB_CONCURRENCY || 1;
-      //'mongodb+srv://jorge:jorge@cluster0.f1efp.mongodb.net/pcdigaScrapper?retryWrites=true&w=majority',
-      process.env.MONGO_DB || 'mongodb+srv://jorge:jorge@cluster0.f1efp.mongodb.net/pcdigaScrapper?retryWrites=true&w=majority',
+      process.env.MONGO_DB || 'mongodb://localhost:27017/pcdigaScrapper?directConnection=true',
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -29,6 +26,8 @@ import { ConfigModule } from '@nestjs/config';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       typePaths: ['./**/*.graphql'],
       driver: ApolloDriver,
+      introspection: true,
+      playground: true,
       definitions: {
         path: join(process.cwd(), 'src/graphql-schema.ts'),
         customScalarTypeMapping: {
