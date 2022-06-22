@@ -3,6 +3,9 @@
 /node_modules
 /documentation
 
+/.vs
+/test
+
 # Logs
 logs
 *.log
