@@ -41,7 +41,7 @@
     "lodash": "^4.17.21",
     "mongoose": "^5.13.14",
     "nest-crawler": "^1.7.0",
-    "puppeteer": "2.1.1",
+    "puppeteer": "^13.0.0",
     "puppeteer-extra-plugin-stealth": "^2.9.0",
     "reflect-metadata": "^0.1.13",
     "helmet": "^5.0.2",
