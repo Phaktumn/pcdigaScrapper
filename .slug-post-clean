@@ -2,3 +2,4 @@ src
 public
 README.md
 node_modules
+node_modules/puppeteer/chrome-win
