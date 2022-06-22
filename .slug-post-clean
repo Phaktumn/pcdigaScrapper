@@ -1,6 +1,4 @@
 src
 public
 README.md
-node_modules/puppeteer/chrome-win
-node_modules/puppeteer/.local-chromium
 .vs
