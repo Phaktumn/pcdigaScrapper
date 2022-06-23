@@ -1,4 +1,5 @@
 public
 README.md
 node_modules/puppeteer/.local-chromium
+node_modules/@web-master/node-web-scraper/node_modules/puppeteer/.local-chromium/
 .vs
