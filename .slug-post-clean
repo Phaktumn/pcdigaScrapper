@@ -1,6 +1,4 @@
 public
 README.md
-node_modules/puppeteer/.local-chromium/win64-982053/chrome-win/interactive_ui_tests.exe
-node_modules/puppeteer/.local-chromium/*/chrome-win/interactive_ui_tests.exe
-node_modules/puppeteer/.local-chromium/*/*/interactive_ui_tests.exe
+node_modules/puppeteer/.local-chromium
 .vs
