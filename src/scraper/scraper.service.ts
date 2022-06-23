@@ -5,7 +5,12 @@ import { transformPricesToNumber } from 'src/common/utils';
 @Injectable()
 export class ScraperService {
   async pageScraping(pageUrl: string) {
-    const browser = await puppeteer.launch({ headless: true });
+    let browser = null;
+    try {
+      browser = await puppeteer.launch({ headless: true, executablePath: process.env.GOOGLE_CHROME_SHIM });
+    } catch(e) {
+      browser = await puppeteer.launch({ headless: true, executablePath: process.env.GOOGLE_CHROME_BIN });
+    }
     const page = await browser.newPage();
     await page.setUserAgent(
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36',
