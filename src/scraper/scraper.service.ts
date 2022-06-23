@@ -7,9 +7,9 @@ export class ScraperService {
   async pageScraping(pageUrl: string) {
     let browser = null;
     try {
-      browser = await puppeteer.launch({ headless: true, executablePath: process.env.GOOGLE_CHROME_SHIM });
+      browser = await puppeteer.launch({ args: ['--no-sandbox'], headless: true, executablePath: process.env.GOOGLE_CHROME_SHIM });
     } catch(e) {
-      browser = await puppeteer.launch({ headless: true, executablePath: process.env.GOOGLE_CHROME_BIN });
+      browser = await puppeteer.launch({ args: ['--no-sandbox'], headless: true, executablePath: process.env.GOOGLE_CHROME_BIN });
     }
     const page = await browser.newPage();
     await page.setUserAgent(
