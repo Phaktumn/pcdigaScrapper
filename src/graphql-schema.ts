@@ -11,6 +11,7 @@ export interface CreateProductInput {
     ean: string;
     name: string;
     url: string;
+    image?: Nullable<string>;
 }
 
 export interface UpdateProductInput {
@@ -41,6 +42,7 @@ export interface Product {
     ean: string;
     name: string;
     url: string;
+    image?: Nullable<string>;
     prices?: Nullable<Nullable<ProductPrice>[]>;
     updatedAt: string;
     createdAt: string;

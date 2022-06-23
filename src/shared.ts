@@ -5,9 +5,7 @@ export enum ENTITIES_KEY {
 
 export const IgnoredProps = {
   _id: 0,
+  'updatedAt': 0,
   'prices._id': 0,
-  'created_at': 0,
-  'updated_at': 0,
-  'prices.createdAt': 0,
-  'prices.updatedAt': 0,
+  'prices.updatedAt': 0
 }

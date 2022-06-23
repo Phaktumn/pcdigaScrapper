@@ -23,14 +23,19 @@ export class ProductsService {
   ) { }
 
   async scrapeProducts(url: string): Promise<Product> {
-    let prod: any = await this.getProduct(url, null);
+    let prod: Product = await this.getProduct(url, null);
     if (prod === null)
       return await this.createProduct(url);
-    return isOlderThan(new Date(prod.updatedAt), 1, 0)
+    return isOlderThan(new Date(prod.updatedAt), 12, 0)
       ? await this.getPrices(url)
       : prod
   }
 
+  /**
+   * 
+   * @param ean Codigo EAN do produto
+   * @returns 
+   */
   async getProductByEan(ean: string): Promise<Product> {
     return await this.productModel.findOne(
       { ean: ean },
@@ -50,19 +55,19 @@ export class ProductsService {
   }
 
   async createProduct(productUrl: string): Promise<Product> {
-    const { currentPrice, originalPrice, priceDifference, name, ean } =
+    const { currentPrice, originalPrice, priceDifference, name, ean, image } =
       await this.scraperService.pageScraping(productUrl);
-
     if (!currentPrice)
       throw new HttpException(
         'ERROR.COULDNT_CREATE_PRODUCT',
         HttpStatus.NOT_FOUND,
       );
 
-    return await new this.productModel({
+    var model = {
       url: productUrl,
       name,
       ean,
+      image,
       prices: {
         currentPrice,
         originalPrice,
@@ -72,7 +77,11 @@ export class ProductsService {
           2,
         ),
       },
-    }).save();
+    };
+    console.log(model) 
+    var res = await new this.productModel(model).save();
+    console.log(res);
+    return res;
   }
 
   async getPrices(productUrl: string): Promise<Product> {
@@ -142,6 +151,7 @@ export class ProductsService {
             name: 1,
             ean: 1,
             updatedAt: 1,
+            Image: 1,
             prices: {
               $filter: {
                 input: '$prices',
@@ -171,12 +181,12 @@ export class ProductsService {
 
     if (product.length === 0) return null;//return await this.createProduct(url);
 
-    if (
+    /*if (
       isOlderThan24Hours(_.head(product).updatedAt) &&
       isCurrentMonthAndYear(priceDate)
     ) {
       return await this.getPrices(url);
-    }
+    }*/
 
     // const { ean, name, prices } = _.head(product);
 

@@ -36,7 +36,10 @@ export class ScraperService {
       const ean: HTMLElement = document.querySelector(
         '#maincontent > div.columns > div > div.product.attribute-header > div.product.attribute-wrapper > div.product.attribute.ean > div',
       );
-
+      
+      const image: HTMLElement = document.querySelector(
+        '#maincontent > div.columns > div.column.main > div.product.media > div.gallery-placeholder > div.fotorama-item > div.fotorama__wrap > div.fotorama__stage > div.fotorama__stage__shaft.fotorama__grab > div.fotorama__active'
+      );
       return {
         currentPrice: currentPrice ? currentPrice.innerText : null,
         originalPrice: originalPrice
@@ -45,9 +48,9 @@ export class ScraperService {
         priceDifference: priceDifference ? priceDifference.innerText : '0',
         name: name.innerText,
         ean: ean.innerText,
+        image: image.getAttribute('href')
       };
     });
-
     await browser.close();
     return {
       ...data,

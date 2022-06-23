@@ -14,6 +14,7 @@ export class CreateProductInput {
   ean: string;
   name: string;
   url: string;
+  image: string;
 }
 
 export class UpdateProductInput {
@@ -43,6 +44,7 @@ export class Product {
   ean: string;
   name: string;
   url: string;
+  image?: string;
   prices?: Nullable<Nullable<ProductPrice>[]>;
   updatedAt: string;
   createdAt: string;
@@ -67,7 +69,6 @@ export class ProductPrice {
 }
 
 export class ProductFilter {
-  
   ean: string;
   name: string;
   url: string;

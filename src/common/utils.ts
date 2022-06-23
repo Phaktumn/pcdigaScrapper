@@ -19,9 +19,9 @@ export const isOlderThan24Hours = (lastUpdateDate: Date): boolean => {
  * @param minutes number of minutes to check
  * @returns true if the last update ocurred more than hours/mins ago
  */
-export const isOlderThan = (lastUpdateDate: Date, hours: number, minutes: number): boolean => {
-  var hToMs = (hours | 24 * 60 * 60 * 1000);
-  var mToMs = (minutes | 60 * 60 * 1000);
+export const isOlderThan = (lastUpdateDate: Date, hours: number = 1, minutes: number = 0): boolean => {
+  var hToMs = (hours * 3600000);
+  var mToMs = (minutes * 60 * 1000);
   return lastUpdateDate.getTime() < Date.now() - (hToMs + mToMs);
 };
 
