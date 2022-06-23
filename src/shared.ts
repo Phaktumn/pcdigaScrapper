@@ -3,6 +3,11 @@ export enum ENTITIES_KEY {
   AUTO_SEARCH_MODEL = 'autosearch',
 }
 
+export const UpdatableProps = [
+  'image',
+  'name'
+]
+
 export const IgnoredProps = {
   _id: 0,
   'updatedAt': 0,

@@ -78,7 +78,7 @@ export class ProductsService {
         ),
       },
     };
-    console.log(model) 
+    console.log(model)
     var res = await new this.productModel(model).save();
     console.log(res);
     return res;
@@ -193,5 +193,19 @@ export class ProductsService {
     //var res = this.sendgridService.send(ean, name, url, _.head(prices));
 
     return _.head(product);
+  }
+
+  async updateProdImage(url: string): Promise<Product> {
+    const { image } = await this.scraperService.pageScraping(url);
+    const product = await this.productModel.findOneAndUpdate(
+      {
+        url: url
+      },
+      {
+        image: image
+      },
+    );
+    product.image = image;
+    return product;
   }
 }

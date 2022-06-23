@@ -32,4 +32,9 @@ export class AppController {
   async scrapeProducts(@Query('url') url: string) {
     return await this.appService.createOrUpdateProd(url)
   }
+
+  @Get('product/update')
+  async updateProdImage(@Query('prop') prop: string, @Query('url') url: string) {
+    return await this.appService.updateProductImage(prop, url)
+  }
 }
