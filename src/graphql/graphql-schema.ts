@@ -27,6 +27,7 @@ export class CreateProductPriceInput {
   originalPrice: number;
   priceDifference: number;
   isOnDiscount: boolean;
+  date: string;
   discountPercentage: number;
 }
 
@@ -52,19 +53,21 @@ export class Product {
 
 export class ProductPrice {
   _id: string;
-  
+
   currentPrice: number;
-  
+
   originalPrice: number;
-  
+
   priceDifference: number;
-  
+
   isOnDiscount?: Nullable<boolean>;
-  
+
   discountPercentage: number;
-  
+
+  date: string;
+
   updatedAt: string;
-  
+
   createdAt: string;
 }
 

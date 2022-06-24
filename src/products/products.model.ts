@@ -7,6 +7,7 @@ export const ProductPriceSchema = new mongoose.Schema(
     priceDifference: Number,
     isOnDiscount: Boolean,
     discountPercentage: Number,
+    date: String
   },
   { timestamps: true, versionKey: false },
 );

@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
+import { FilterQuery, Model, Aggregate } from 'mongoose';
 import {
   calculateDiscountPercentage,
   isCurrentMonthAndYear,
@@ -62,7 +62,8 @@ export class ProductsService {
         'ERROR.COULDNT_CREATE_PRODUCT',
         HttpStatus.NOT_FOUND,
       );
-
+    var now = new Date(Date.now());
+    var dateformated = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear().toString().slice(-2)}`;
     var model = {
       url: productUrl,
       name,
@@ -72,15 +73,14 @@ export class ProductsService {
         currentPrice,
         originalPrice,
         priceDifference,
+        date: dateformated,
         isOnDiscount: priceDifference > 0,
         discountPercentage: ((priceDifference / originalPrice) * 100).toFixed(
           2,
         ),
       },
     };
-    console.log(model)
     var res = await new this.productModel(model).save();
-    console.log(res);
     return res;
   }
 
@@ -93,7 +93,8 @@ export class ProductsService {
         'ERROR.COULDNT_CREATE_PRODUCT',
         HttpStatus.NOT_FOUND,
       );
-
+    var now = new Date(Date.now());
+    var dateformated = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear().toString().slice(-2)}`;
     const product = await this.productModel.findOneAndUpdate(
       { url: productUrl },
       {
@@ -103,6 +104,7 @@ export class ProductsService {
             originalPrice,
             priceDifference,
             isOnDiscount: priceDifference > 0,
+            date: dateformated,
             discountPercentage: calculateDiscountPercentage(
               priceDifference,
               originalPrice,
@@ -202,10 +204,12 @@ export class ProductsService {
         url: url
       },
       {
-        image: image
+        "image": image,
       },
+      {
+        new: true,
+      }
     );
-    product.image = image;
     return product;
   }
 }
