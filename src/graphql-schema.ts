@@ -25,6 +25,7 @@ export interface CreateProductPriceInput {
     priceDifference: number;
     isOnDiscount: boolean;
     discountPercentage: number;
+    date: string;
 }
 
 export interface ProductAutoSearch {
@@ -55,6 +56,7 @@ export interface ProductPrice {
     priceDifference: number;
     isOnDiscount?: Nullable<boolean>;
     discountPercentage: number;
+    date: string;
     updatedAt: string;
     createdAt: string;
 }

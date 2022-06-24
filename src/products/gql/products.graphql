@@ -16,6 +16,7 @@ type ProductPrice {
   priceDifference: Float!
   isOnDiscount: Boolean
   discountPercentage: Float!
+  date: String!
   updatedAt: String!
   createdAt: String!
 }
@@ -38,6 +39,7 @@ input CreateProductPriceInput {
   priceDifference: Float!
   isOnDiscount: Boolean!
   discountPercentage: Float!
+  date: String!
 }
 
 type Query {
