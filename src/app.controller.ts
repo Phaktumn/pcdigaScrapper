@@ -1,7 +1,6 @@
 import { Controller, Get, HttpCode, Query, Req } from '@nestjs/common';
 import { AppService } from './app.service';
-import { Product as ProductInterface } from './graphql-schema';
-import { Product as ProductClass, ProductFilter } from './graphql/graphql-schema';
+import { Product as ProductInterface } from './graphql/graphql-schema';
 import { Request } from 'express';
 
 @Controller()
@@ -13,6 +12,18 @@ export class AppController {
     return this.appService.getHello();
   }
 
+  @Get('product/create')
+  async createProduct(@Query('url') url: string): Promise<ProductInterface>
+  {
+    return await this.appService.create(url);
+  }
+
+  @Get('product/prices')
+  async prices(@Query('url') url: string): Promise<ProductInterface>
+  {
+    return await this.appService.createPrices(url);
+  }
+  
   @Get('product')
   async getProduct(@Query('ean') ean: string): Promise<ProductInterface> {
     return await this.appService.getProduct(ean);

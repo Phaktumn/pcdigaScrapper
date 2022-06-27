@@ -1,4 +1,4 @@
-import { createParamDecorator, ExecutionContext } from "@nestjs/common";
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
 export const transformPricesToNumber = (price: string): number =>
   +price.replace(/(\d+),(\d+).*/, '$1.$2').replace(/[^0-9.]/g, '');
@@ -13,15 +13,19 @@ export const isOlderThan24Hours = (lastUpdateDate: Date): boolean => {
 };
 
 /**
- * 
+ *
  * @param lastUpdateDate Last date the price was updated
  * @param hours number of hours to check
  * @param minutes number of minutes to check
  * @returns true if the last update ocurred more than hours/mins ago
  */
-export const isOlderThan = (lastUpdateDate: Date, hours: number = 1, minutes: number = 0): boolean => {
-  var hToMs = (hours * 3600000);
-  var mToMs = (minutes * 60 * 1000);
+export const isOlderThan = (
+  lastUpdateDate: Date,
+  hours: number = 1,
+  minutes: number = 0,
+): boolean => {
+  var hToMs = hours * 3600000;
+  var mToMs = minutes * 60 * 1000;
   return lastUpdateDate.getTime() < Date.now() - (hToMs + mToMs);
 };
 
@@ -36,11 +40,11 @@ export const isCurrentMonthAndYear = (lastUpdateDate: Date): boolean => {
 
 export const SilentQuery = createParamDecorator(
   (data: string | undefined, ctx: ExecutionContext) => {
-    const request = ctx.switchToHttp().getRequest()
+    const request = ctx.switchToHttp().getRequest();
     if (data) {
-      return request.query[data]
+      return request.query[data];
     } else {
-      return request.query
+      return request.query;
     }
   },
-)
+);

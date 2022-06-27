@@ -1,28 +1,42 @@
-type Product {
+type Seller {
   _id: ID!
-  ean: String!
+
   name: String!
   url: String!
+  productEan: String!
+  productPrices: [ProductPrice]
+
+  updatedAt: String!
+  createdAt: String!
+}
+
+type Product {
+  _id: ID!
+  
+  name: String!
+  sku: String!
   image: String
-  prices: [ProductPrice]
+  sellers: [Seller]
+  
   updatedAt: String!
   createdAt: String!
 }
 
 type ProductPrice {
   _id: ID!
+  
   currentPrice: Float!
   originalPrice: Float!
   priceDifference: Float!
   isOnDiscount: Boolean
   discountPercentage: Float!
   date: String!
+  
   updatedAt: String!
   createdAt: String!
 }
 
 input CreateProductInput {
-  ean: String!
   name: String!
   url: String!
   image: String
@@ -40,6 +54,17 @@ input CreateProductPriceInput {
   isOnDiscount: Boolean!
   discountPercentage: Float!
   date: String!
+}
+
+input CreateSellerInput {
+  name: String!
+  productName: String!
+}
+
+input UpdateSellerInput {
+  name: String
+  url: String
+  productName: String
 }
 
 type Query {

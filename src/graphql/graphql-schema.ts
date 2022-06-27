@@ -6,83 +6,81 @@
 
 /* tslint:disable */
 /* eslint-disable */
-export class ProductAutoSearchInput {
-  isActive: boolean;
-}
-
-export class CreateProductInput {
-  ean: string;
+export interface CreateProductInput {
   name: string;
   url: string;
-  image: string;
+  image?: Nullable<string>;
 }
 
-export class UpdateProductInput {
+export interface UpdateProductInput {
   name?: Nullable<string>;
   url?: Nullable<string>;
 }
 
-export class CreateProductPriceInput {
+export interface CreateProductPriceInput {
   currentPrice: number;
   originalPrice: number;
   priceDifference: number;
   isOnDiscount: boolean;
-  date: string;
   discountPercentage: number;
+  date: string;
 }
 
-export class ProductAutoSearch {
+export interface CreateSellerInput {
+  name: string;
+  productName: string;
+}
+
+export interface UpdateSellerInput {
+  name?: Nullable<string>;
+  url?: Nullable<string>;
+  productName?: Nullable<string>;
+}
+
+export interface ProductAutoSearch {
   isActive: boolean;
   url: string;
+  hash: string;
 }
 
-export abstract class IMutation {
-  abstract addProductToAutoSearch(url: string): boolean | Promise<boolean>;
+export interface IMutation {
+  addProductToAutoSearch(url: string): boolean | Promise<boolean>;
 }
 
-export class Product {
+export interface Seller {
   _id: string;
-  ean: string;
   name: string;
   url: string;
-  image?: string;
-  prices?: Nullable<Nullable<ProductPrice>[]>;
+  productEan: string;
+  productPrices?: Nullable<Nullable<ProductPrice>[]>;
   updatedAt: string;
   createdAt: string;
 }
 
-export class ProductPrice {
+export interface Product {
   _id: string;
+  name: string;
+  sku: string;
+  image?: Nullable<string>;
+  sellers?: Nullable<Nullable<Seller>[]>;
+  updatedAt: string;
+  createdAt: string;
+}
 
+export interface ProductPrice {
+  _id: string;
   currentPrice: number;
-
   originalPrice: number;
-
   priceDifference: number;
-
   isOnDiscount?: Nullable<boolean>;
-
   discountPercentage: number;
-
   date: string;
-
-  updatedAt: string;
-
-  createdAt: string;
-}
-
-export class ProductFilter {
-  ean: string;
-  name: string;
-  url: string;
-  priceMin: number;
-  priceMax: number;
   updatedAt: string;
   createdAt: string;
 }
 
-export abstract class IQuery {
-  abstract getProduct(
+export interface IQuery {
+  getProduct(
     url: string,
     priceDate?: Nullable<string>,
   ): Product | Promise<Product>;

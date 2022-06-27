@@ -8,7 +8,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface CreateProductInput {
-    ean: string;
     name: string;
     url: string;
     image?: Nullable<string>;
@@ -28,6 +27,17 @@ export interface CreateProductPriceInput {
     date: string;
 }
 
+export interface CreateSellerInput {
+    name: string;
+    productName: string;
+}
+
+export interface UpdateSellerInput {
+    name?: Nullable<string>;
+    url?: Nullable<string>;
+    productName?: Nullable<string>;
+}
+
 export interface ProductAutoSearch {
     isActive: boolean;
     url: string;
@@ -38,13 +48,22 @@ export interface IMutation {
     addProductToAutoSearch(url: string): boolean | Promise<boolean>;
 }
 
-export interface Product {
+export interface Seller {
     _id: string;
-    ean: string;
     name: string;
     url: string;
+    productEan: string;
+    productPrices?: Nullable<Nullable<ProductPrice>[]>;
+    updatedAt: string;
+    createdAt: string;
+}
+
+export interface Product {
+    _id: string;
+    name: string;
+    sku: string;
     image?: Nullable<string>;
-    prices?: Nullable<Nullable<ProductPrice>[]>;
+    sellers?: Nullable<Nullable<Seller>[]>;
     updatedAt: string;
     createdAt: string;
 }

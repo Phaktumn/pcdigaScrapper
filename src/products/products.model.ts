@@ -12,13 +12,26 @@ export const ProductPriceSchema = new mongoose.Schema(
   { timestamps: true, versionKey: false },
 );
 
-export const ProductSchema = new mongoose.Schema(
+export const SellerSchema = new mongoose.Schema(
   {
-    ean: String,
     name: String,
     url: String,
+    /** Seller product URL */
+    productUrl: String,
+    /** Seller ean */
+    productEan: String,
+    productPrices: [{ type: ProductPriceSchema }]
+  },
+  { timestamps: true, versionKey: false },
+);
+
+export const ProductSchema = new mongoose.Schema(
+  {
+    /** Product SKU */
+    sku: String,
+    name: String,
     image: String,
-    prices: [{ type: ProductPriceSchema }],
+    sellers: [{ type: SellerSchema }],
   },
   { timestamps: true, versionKey: false },
 );

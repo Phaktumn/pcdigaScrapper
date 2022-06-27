@@ -5,13 +5,15 @@ import {
   calculateDiscountPercentage,
   isCurrentMonthAndYear,
   isOlderThan24Hours,
-  isOlderThan
+  isOlderThan,
 } from 'src/common/utils';
-import { Product, ProductFilter } from 'src/graphql/graphql-schema';
+import { Product } from 'src/graphql/graphql-schema';
 import { ScraperService } from 'src/scraper/scraper.service';
-import { ENTITIES_KEY, IgnoredProps } from 'src/shared';
+import { ENTITIES_KEY, IgnoredProps, SELLER_NAMES } from 'src/shared';
 import * as _ from 'lodash';
 import { ThirdPartyEmailService } from 'src/third-party/third-party.service';
+import { GlobalDataScraperService } from 'src/scraper/globadata-scrapper.service';
+import { Seller } from 'src/graphql-schema';
 
 @Injectable()
 export class ProductsService {
@@ -19,65 +21,104 @@ export class ProductsService {
     @InjectModel(ENTITIES_KEY.PRODUCTS_MODEL)
     private productModel: Model<Product>,
     private scraperService: ScraperService,
+    private globalDataScraperService: GlobalDataScraperService,
     private readonly sendgridService: ThirdPartyEmailService,
-  ) { }
-
-  async scrapeProducts(url: string): Promise<Product> {
-    let prod: Product = await this.getProduct(url, null);
-    if (prod === null)
-      return await this.createProduct(url);
-    return isOlderThan(new Date(prod.updatedAt), 12, 0)
-      ? await this.getPrices(url)
-      : prod
-  }
+  ) {}
 
   /**
-   * 
-   * @param ean Codigo EAN do produto
-   * @returns 
+   * ............{seller_name}.com/
+   * ............{seller_name}.pt/
+   * https://www.pcdiga.com/
+   * productUrl.slice(12).split('.')
+   * ['pcdiga', 'com/...']
+   * [0] = 'pcdiga'
+   * @param productUrl
+   * @returns The product scraped from the proper seller
    */
-  async getProductByEan(ean: string): Promise<Product> {
-    return await this.productModel.findOne(
-      { ean: ean },
-      IgnoredProps,
+  async validateUrl(productUrl: string) {
+    var sellerName = productUrl.slice(12).split('.')[0];
+    console.log(sellerName);
+    var scrappedValue: any = {};
+    switch (sellerName) {
+      case SELLER_NAMES.GLOBAL_DATA:
+        scrappedValue = await this.globalDataScraperService.pageScraping(
+          productUrl,
+        );
+        break;
+      case SELLER_NAMES.PC_DIGA:
+        scrappedValue = await this.scraperService.pageScraping(productUrl);
+        break;
+      default:
+        throw new HttpException('ERROR.SELLER_NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+    return { sellerName, scrappedValue };
+  }
+
+  async scrapeProducts(url: string): Promise<Product> {
+    /*
+    let prod: Product = await this.getProduct(url, null);
+    this.productModel.findOne({ sku })
+    if (prod === null) return await this.createProduct(url);
+    return isOlderThan(new Date(prod.updatedAt), 12, 0)
+      ? await this.getPrices(url)
+      : prod;
+      */
+    throw new HttpException(
+      'ERROR.NOT_IMPLEMENTED',
+      HttpStatus.INTERNAL_SERVER_ERROR,
     );
   }
 
-  async productExists(url: string, ean: string): Promise<boolean> {
-    if (!url && !ean) {
+  /**
+   *
+   * @param ean Codigo EAN do produto
+   * @returns
+   */
+  async getProductByEan(ean: string): Promise<Product> {
+    return await this.productModel.findOne({ ean: ean }, IgnoredProps);
+  }
+
+  async productExists(sku: string): Promise<boolean> {
+    if (!sku) {
       throw new HttpException(
-        'ERROR.PARAMS_NOT_VALID',
+        'ERROR.PARAM_NOT_VALID',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-    let filter: FilterQuery<Product> = ean ? { 'ean': ean } : { 'url': url };
+    let filter: FilterQuery<Product> = { sku: sku };
     return await this.productModel.exists(filter);
   }
 
   async createProduct(productUrl: string): Promise<Product> {
-    const { currentPrice, originalPrice, priceDifference, name, ean, image } =
-      await this.scraperService.pageScraping(productUrl);
-    if (!currentPrice)
+    const { scrappedValue, sellerName } = await this.validateUrl(productUrl);
+    if (!scrappedValue.currentPrice)
       throw new HttpException(
         'ERROR.COULDNT_CREATE_PRODUCT',
         HttpStatus.NOT_FOUND,
       );
     var now = new Date(Date.now());
-    var dateformated = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear().toString().slice(-2)}`;
+    var dateformated = `${now.getDate()}/${now.getMonth() + 1}/${now
+      .getFullYear()
+      .toString()
+      .slice(-2)}`;
     var model = {
-      url: productUrl,
-      name,
-      ean,
-      image,
-      prices: {
-        currentPrice,
-        originalPrice,
-        priceDifference,
-        date: dateformated,
-        isOnDiscount: priceDifference > 0,
-        discountPercentage: ((priceDifference / originalPrice) * 100).toFixed(
-          2,
-        ),
+      sku: scrappedValue.sku,
+      image: scrappedValue.image,
+      sellers: {
+        name: sellerName,
+        url: productUrl,
+        productEan: scrappedValue.ean,
+        productPrices: {
+          currentPrice: scrappedValue.currentPrice,
+          originalPrice: scrappedValue.originalPrice,
+          priceDifference: scrappedValue.priceDifference,
+          date: dateformated,
+          isOnDiscount: scrappedValue.priceDifference > 0,
+          discountPercentage: (
+            (scrappedValue.priceDifference / scrappedValue.originalPrice) *
+            100
+          ).toFixed(2),
+        },
       },
     };
     var res = await new this.productModel(model).save();
@@ -85,34 +126,111 @@ export class ProductsService {
   }
 
   async getPrices(productUrl: string): Promise<Product> {
-    const { currentPrice, originalPrice, priceDifference } =
-      await this.scraperService.pageScraping(productUrl);
+    //Read specific variables
+    const { scrappedValue, sellerName } = await this.validateUrl(productUrl);
 
-    if (!currentPrice)
+    if (!scrappedValue.currentPrice)
       throw new HttpException(
         'ERROR.COULDNT_CREATE_PRODUCT',
         HttpStatus.NOT_FOUND,
       );
     var now = new Date(Date.now());
-    var dateformated = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear().toString().slice(-2)}`;
-    const product = await this.productModel.findOneAndUpdate(
-      { url: productUrl },
-      {
-        $push: {
-          prices: {
-            currentPrice,
-            originalPrice,
-            priceDifference,
-            isOnDiscount: priceDifference > 0,
+    var dateformated = `${now.getDate()}/${now.getMonth() + 1}/${now
+      .getFullYear()
+      .toString()
+      .slice(-2)}`;
+
+    if ((scrappedValue.sku as String).endsWith('LHR')) {
+      scrappedValue.sku = scrappedValue.sku.slice(
+        0,
+        scrappedValue.sku.length - 3,
+      );
+    }
+
+    const filter = { sku: scrappedValue.sku };
+    const update = {
+      $push: {
+        sellers: {
+          name: sellerName,
+          url: productUrl,
+          productEan: scrappedValue.ean,
+          productPrices: {
+            currentPrice: scrappedValue.currentPrice,
+            originalPrice: scrappedValue.originalPrice,
+            priceDifference: scrappedValue.priceDifference,
             date: dateformated,
-            discountPercentage: calculateDiscountPercentage(
-              priceDifference,
-              originalPrice,
-            ),
+            isOnDiscount: scrappedValue.priceDifference > 0,
+            discountPercentage: (
+              (scrappedValue.priceDifference / scrappedValue.originalPrice) *
+              100
+            ).toFixed(2),
           },
         },
       },
-    );
+    };
+    const filteredProd: Product = await this.productModel
+      .findOne(filter)
+      .exec();
+      
+    let sellerExists: Boolean = false;
+    for (let index = 0; index < filteredProd.sellers.length; index++) {
+      const element = filteredProd.sellers[index];
+      sellerExists = element.name === sellerName;
+      if (sellerExists)
+        break;
+    }
+
+    let product: Product = null;
+    if (filteredProd === null) {
+      throw new HttpException('ERROR.PRODUCT_NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
+    if (!sellerExists) {
+      product = await this.productModel
+        .findOneAndUpdate(filter, update, { new: true })
+        .exec();
+    } else {
+      const update = {
+        $push: {
+          'sellers.$[elem].productPrices': {
+            currentPrice: scrappedValue.currentPrice,
+            originalPrice: scrappedValue.originalPrice,
+            priceDifference: scrappedValue.priceDifference,
+            date: dateformated,
+            isOnDiscount: scrappedValue.priceDifference > 0,
+            discountPercentage: (
+              (scrappedValue.priceDifference / scrappedValue.originalPrice) *
+              100
+            ).toFixed(2),
+          },
+        },
+      };
+      const arrayFilters = [{ 'elem.name': sellerName }];
+      product = await this.productModel
+        .findOneAndUpdate(filter, update, {
+          arrayFilters: arrayFilters,
+          new: true,
+        })
+        .exec();
+    }
+
+    console.log(product);
+
+    /**{
+        $push: {
+          'sellers.$.prices': {
+            currentPrice: scrappedValue.currentPrice,
+            originalPrice: scrappedValue.originalPrice,
+            priceDifference: scrappedValue.priceDifference,
+            isOnDiscount: scrappedValue.priceDifference > 0,
+            date: dateformated,
+            discountPercentage: calculateDiscountPercentage(
+              scrappedValue.priceDifference,
+              scrappedValue.originalPrice,
+            ),
+          },
+        },
+      }, */
 
     return product;
   }
@@ -120,59 +238,66 @@ export class ProductsService {
   async getProductMatch(filter: any): Promise<Product[]> {
     const computedFilter = {
       $and: [
-        filter.name !== undefined ? { 'name': { $regex: '.*' + (filter.name as String | '') + '.*' } } : {},
-        filter.url !== undefined ? { 'url': { $regex: '.*' + (filter.url as String | '') + '.*' } } : {},
-        filter.ean !== undefined ? { 'ean': { $regex: '.*' + (filter.ean as String | '') + '.*' } } : {},
+        filter.name !== undefined
+          ? { name: { $regex: '.*' + (filter.name as String | '') + '.*' } }
+          : {},
+        filter.url !== undefined
+          ? { url: { $regex: '.*' + (filter.url as String | '') + '.*' } }
+          : {},
+        filter.ean !== undefined
+          ? { ean: { $regex: '.*' + (filter.ean as String | '') + '.*' } }
+          : {},
         {
           $or: [
-            { 'prices.currentPrice': { $lte: filter.priceMin | Number.MAX_SAFE_INTEGER } },
-            { 'prices.currentPrice': { $gte: filter.priceMax | 0 } }
-          ]
-        }
+            {
+              'sellers.prices.currentPrice': {
+                $lte: filter.priceMin | Number.MAX_SAFE_INTEGER,
+              },
+            },
+            { 'sellers.prices.currentPrice': { $gte: filter.priceMax | 0 } },
+          ],
+        },
       ],
     };
     return await this.productModel.find(computedFilter, IgnoredProps);
   }
 
-  async getProduct(url: string, date: string): Promise<Product> {
+  async getProduct(sku: string, date: string): Promise<Product> {
     let priceDate;
-
     date ? (priceDate = new Date(date)) : (priceDate = new Date());
-
     const product = await this.productModel
       .aggregate([
         {
-          $match: {
-            url,
-          },
+          sku: sku,
         },
         {
           $project: {
             _id: 1,
-            url: 1,
+            sku: 1,
             name: 1,
-            ean: 1,
             updatedAt: 1,
             Image: 1,
-            prices: {
-              $filter: {
-                input: '$prices',
-                as: 'price',
-                cond: {
-                  $and: [
-                    {
-                      $eq: [
-                        { $month: '$$price.createdAt' },
-                        priceDate.getMonth() + 1,
-                      ],
-                    },
-                    {
-                      $eq: [
-                        { $year: '$$price.createdAt' },
-                        priceDate.getFullYear(),
-                      ],
-                    },
-                  ],
+            sellers: {
+              productPrices: {
+                $filter: {
+                  input: '$prices',
+                  as: 'price',
+                  cond: {
+                    $and: [
+                      {
+                        $eq: [
+                          { $month: '$$price.createdAt' },
+                          priceDate.getMonth() + 1,
+                        ],
+                      },
+                      {
+                        $eq: [
+                          { $year: '$$price.createdAt' },
+                          priceDate.getFullYear(),
+                        ],
+                      },
+                    ],
+                  },
                 },
               },
             },
@@ -181,7 +306,7 @@ export class ProductsService {
       ])
       .exec();
 
-    if (product.length === 0) return null;//return await this.createProduct(url);
+    if (product.length === 0) return null; //return await this.createProduct(url);
 
     /*if (
       isOlderThan24Hours(_.head(product).updatedAt) &&
@@ -201,14 +326,14 @@ export class ProductsService {
     const { image } = await this.scraperService.pageScraping(url);
     const product = await this.productModel.findOneAndUpdate(
       {
-        url: url
+        url: url,
       },
       {
-        "image": image,
+        image: image,
       },
       {
         new: true,
-      }
+      },
     );
     return product;
   }

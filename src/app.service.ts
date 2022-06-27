@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { Product } from './graphql-schema';
+import { HttpCode, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Product } from './graphql/graphql-schema';
 import { ProductsService } from './products/products.service';
 import { UpdatableProps } from './shared';
 
@@ -13,27 +13,40 @@ export class AppService {
     return 'Welcome';
   }
   
+  async create(url: string): Promise<Product> {
+    return await this.ProductsService.createProduct(url);
+  }
+
+  async createPrices(url: string): Promise<Product> {
+    return await this.ProductsService.getPrices(url);
+  }
+
   async getProduct(ean: string): Promise<Product> {
-    return await this.ProductsService.getProductByEan(ean);
+    //return await this.ProductsService.getProductByEan(ean);
+    throw new HttpException("ERROR.NOT_IMPLEMENTED", HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   async getProductMatch(filter: any): Promise<Product[]> {
-    return await this.ProductsService.getProductMatch(filter);
+    //return await this.ProductsService.getProductMatch(filter);
+    throw new HttpException("ERROR.NOT_IMPLEMENTED", HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   async getProductBy(url: string, ean: string): Promise<Product | any> {
-    if (await this.ProductsService.productExists(url, ean))
+    /*if (await this.ProductsService.productExists(url, ean))
       return { message: 'Product already exists' };
-    return await this.ProductsService.getProduct(url, Date.now.toString());
+    return await this.ProductsService.getProduct(url, Date.now.toString());*/
+    throw new HttpException("ERROR.NOT_IMPLEMENTED", HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   async createOrUpdateProd(url: string): Promise<Product> {
-    return await this.ProductsService.scrapeProducts(url);
+    //return await this.ProductsService.scrapeProducts(url);
+    throw new HttpException("ERROR.NOT_IMPLEMENTED", HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   async updateProductImage(prop: string, url: string): Promise<Product | string> {
     if (UpdatableProps.find(x => x == prop) !== null) {
-      return await this.ProductsService.updateProdImage(url); 
+      //return await this.ProductsService.updateProdImage(url);
+      throw new HttpException("ERROR.NOT_IMPLEMENTED", HttpStatus.INTERNAL_SERVER_ERROR);
     }
     else return 'Prop ' + prop + ' is not updatable';
   }
