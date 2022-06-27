@@ -21,14 +21,14 @@ export class AppService {
     return await this.ProductsService.getPrices(url);
   }
 
-  async getProduct(ean: string): Promise<Product> {
-    //return await this.ProductsService.getProductByEan(ean);
-    throw new HttpException("ERROR.NOT_IMPLEMENTED", HttpStatus.INTERNAL_SERVER_ERROR);
+  async getProduct(sku: string): Promise<Product> {
+    return await this.ProductsService.getProductBySku(sku);
+    //throw new HttpException("ERROR.NOT_IMPLEMENTED", HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   async getProductMatch(filter: any): Promise<Product[]> {
-    //return await this.ProductsService.getProductMatch(filter);
-    throw new HttpException("ERROR.NOT_IMPLEMENTED", HttpStatus.INTERNAL_SERVER_ERROR);
+    return await this.ProductsService.getProductMatch(filter);
+    //throw new HttpException("ERROR.NOT_IMPLEMENTED", HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   async getProductBy(url: string, ean: string): Promise<Product | any> {
@@ -38,9 +38,9 @@ export class AppService {
     throw new HttpException("ERROR.NOT_IMPLEMENTED", HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
-  async createOrUpdateProd(url: string): Promise<Product> {
-    //return await this.ProductsService.scrapeProducts(url);
-    throw new HttpException("ERROR.NOT_IMPLEMENTED", HttpStatus.INTERNAL_SERVER_ERROR);
+  async createOrUpdateProd(sku: string): Promise<Product> {
+    return await this.ProductsService.scrapeProducts(sku);
+    //throw new HttpException("ERROR.NOT_IMPLEMENTED", HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   async updateProductImage(prop: string, url: string): Promise<Product | string> {

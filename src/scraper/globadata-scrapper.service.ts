@@ -55,12 +55,11 @@ export class GlobalDataScraperService {
         priceDifference: priceDifference ? priceDifference.innerText : '0',
         name: name.innerText,
         ean: ean.innerText.replace('EAN', '').trim(),
-        image: image.getAttribute('href'),
+        image: image.getAttribute('src'),
         sku: sku.innerText.replace('SKU', '').trim(),
       };
     });
     await browser.close();
-    console.log(data);
     return {
       ...data,
       currentPrice: transformPricesToNumber(data.currentPrice),

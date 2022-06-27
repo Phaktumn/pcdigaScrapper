@@ -23,7 +23,7 @@ export class ProductsService {
     private scraperService: ScraperService,
     private globalDataScraperService: GlobalDataScraperService,
     private readonly sendgridService: ThirdPartyEmailService,
-  ) {}
+  ) { }
 
   /**
    * ............{seller_name}.com/
@@ -54,28 +54,26 @@ export class ProductsService {
     return { sellerName, scrappedValue };
   }
 
-  async scrapeProducts(url: string): Promise<Product> {
-    /*
-    let prod: Product = await this.getProduct(url, null);
-    this.productModel.findOne({ sku })
-    if (prod === null) return await this.createProduct(url);
-    return isOlderThan(new Date(prod.updatedAt), 12, 0)
-      ? await this.getPrices(url)
-      : prod;
-      */
-    throw new HttpException(
-      'ERROR.NOT_IMPLEMENTED',
-      HttpStatus.INTERNAL_SERVER_ERROR,
-    );
+  async scrapeProducts(sku: string): Promise<Product> {
+    const prod: Product = await this.productModel.findOne({ sku: sku });
+    if (prod === null)
+      throw new HttpException({ Error: 'ERROR.PRODUCT_NOT_FOUND', Param: 'SKU not present' }, 400);
+    if (isOlderThan(new Date(prod.updatedAt), 0, 1)) {
+      prod.sellers.forEach(element => {
+        this.getPrices(element.url);
+      });
+    }
+
+    return await this.productModel.findOne({ sku: sku });
   }
 
   /**
    *
-   * @param ean Codigo EAN do produto
+   * @param sku Codigo SKU do produto
    * @returns
    */
-  async getProductByEan(ean: string): Promise<Product> {
-    return await this.productModel.findOne({ ean: ean }, IgnoredProps);
+  async getProductBySku(sku: string): Promise<Product> {
+    return await this.productModel.findOne({ sku: sku }, IgnoredProps);
   }
 
   async productExists(sku: string): Promise<boolean> {
@@ -101,9 +99,11 @@ export class ProductsService {
       .getFullYear()
       .toString()
       .slice(-2)}`;
+    console.log(scrappedValue.image);
     var model = {
       sku: scrappedValue.sku,
       image: scrappedValue.image,
+      name: scrappedValue.name,
       sellers: {
         name: sellerName,
         url: productUrl,
@@ -171,7 +171,7 @@ export class ProductsService {
     const filteredProd: Product = await this.productModel
       .findOne(filter)
       .exec();
-      
+
     let sellerExists: Boolean = false;
     for (let index = 0; index < filteredProd.sellers.length; index++) {
       const element = filteredProd.sellers[index];
@@ -214,8 +214,6 @@ export class ProductsService {
         .exec();
     }
 
-    console.log(product);
-
     /**{
         $push: {
           'sellers.$.prices': {
@@ -244,19 +242,9 @@ export class ProductsService {
         filter.url !== undefined
           ? { url: { $regex: '.*' + (filter.url as String | '') + '.*' } }
           : {},
-        filter.ean !== undefined
-          ? { ean: { $regex: '.*' + (filter.ean as String | '') + '.*' } }
-          : {},
-        {
-          $or: [
-            {
-              'sellers.prices.currentPrice': {
-                $lte: filter.priceMin | Number.MAX_SAFE_INTEGER,
-              },
-            },
-            { 'sellers.prices.currentPrice': { $gte: filter.priceMax | 0 } },
-          ],
-        },
+        filter.sku !== undefined
+          ? { sku: { $regex: '.*' + (filter.sku as String | '') + '.*' } }
+          : {}
       ],
     };
     return await this.productModel.find(computedFilter, IgnoredProps);

@@ -25,8 +25,8 @@ export class AppController {
   }
   
   @Get('product')
-  async getProduct(@Query('ean') ean: string): Promise<ProductInterface> {
-    return await this.appService.getProduct(ean);
+  async getProduct(@Query('sku') sku: string): Promise<ProductInterface> {
+    return await this.appService.getProduct(sku);
   }
 
   @Get('product/getAndCreate')
@@ -39,9 +39,9 @@ export class AppController {
     return await this.appService.getProductMatch(request.query)
   }
 
-  @Get('scrape/')
-  async scrapeProducts(@Query('url') url: string) {
-    return await this.appService.createOrUpdateProd(url)
+  @Get('scrape')
+  async scrapeProducts(@Query('sku') sku: string) {
+    return await this.appService.createOrUpdateProd(sku)
   }
 
   @Get('product/update')
