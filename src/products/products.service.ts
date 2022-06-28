@@ -55,16 +55,20 @@ export class ProductsService {
   }
 
   async scrapeProducts(sku: string): Promise<Product> {
+    console.log(sku);
     const prod: Product = await this.productModel.findOne({ sku: sku });
     if (prod === null)
       throw new HttpException({ Error: 'ERROR.PRODUCT_NOT_FOUND', Param: 'SKU not present' }, 400);
-    if (isOlderThan(new Date(prod.updatedAt), 0, 1)) {
+    if (isOlderThan(new Date(prod.updatedAt), 12, 0)) {
+      console.log(prod);
       prod.sellers.forEach(element => {
         this.getPrices(element.url);
       });
+      return await this.productModel.findOne({ sku: sku });
     }
-
-    return await this.productModel.findOne({ sku: sku });
+    else {
+      throw new HttpException(`ERROR.CANT_PROCESS_NOW Wait atleast 12h before updating again. Last update ${prod.updatedAt}`, HttpStatus.PRECONDITION_FAILED)
+    }
   }
 
   /**
@@ -89,40 +93,73 @@ export class ProductsService {
 
   async createProduct(productUrl: string): Promise<Product> {
     const { scrappedValue, sellerName } = await this.validateUrl(productUrl);
-    if (!scrappedValue.currentPrice)
-      throw new HttpException(
-        'ERROR.COULDNT_CREATE_PRODUCT',
-        HttpStatus.NOT_FOUND,
-      );
-    var now = new Date(Date.now());
-    var dateformated = `${now.getDate()}/${now.getMonth() + 1}/${now
+    const now = new Date(Date.now());
+    const dateformated = `${now.getDate()}/${now.getMonth() + 1}/${now
       .getFullYear()
       .toString()
       .slice(-2)}`;
-    console.log(scrappedValue.image);
-    var model = {
-      sku: scrappedValue.sku,
-      image: scrappedValue.image,
-      name: scrappedValue.name,
-      sellers: {
-        name: sellerName,
-        url: productUrl,
-        productEan: scrappedValue.ean,
-        productPrices: {
-          currentPrice: scrappedValue.currentPrice,
-          originalPrice: scrappedValue.originalPrice,
-          priceDifference: scrappedValue.priceDifference,
-          date: dateformated,
-          isOnDiscount: scrappedValue.priceDifference > 0,
-          discountPercentage: (
-            (scrappedValue.priceDifference / scrappedValue.originalPrice) *
-            100
-          ).toFixed(2),
+    const filter = { sku: scrappedValue.sku };
+    const update = {
+      $push: {
+        sellers: {
+          name: sellerName,
+          url: productUrl,
+          productEan: scrappedValue.ean,
+          productPrices: {
+            currentPrice: scrappedValue.currentPrice,
+            originalPrice: scrappedValue.originalPrice,
+            priceDifference: scrappedValue.priceDifference,
+            date: dateformated,
+            isOnDiscount: scrappedValue.priceDifference > 0,
+            discountPercentage: (
+              (scrappedValue.priceDifference / scrappedValue.originalPrice) *
+              100
+            ).toFixed(2),
+          },
         },
       },
     };
-    var res = await new this.productModel(model).save();
-    return res;
+    const filteredProd: Product = await this.productModel
+      .findOne(filter)
+      .exec();
+    if (filteredProd !== null) {
+      if (filteredProd.sellers.find(seller => seller.name === sellerName)){
+        throw new HttpException(
+          'ERROR.PARAM_NOT_VALID: Seller already exists',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      else {
+         return await this.productModel
+        .findOneAndUpdate(filter, update, { new: true })
+        .exec();
+      }
+    }
+    else {
+      var model = {
+        sku: scrappedValue.sku,
+        image: scrappedValue.image,
+        name: scrappedValue.name,
+        sellers: {
+          name: sellerName,
+          url: productUrl,
+          productEan: scrappedValue.ean,
+          productPrices: {
+            currentPrice: scrappedValue.currentPrice,
+            originalPrice: scrappedValue.originalPrice,
+            priceDifference: scrappedValue.priceDifference,
+            date: dateformated,
+            isOnDiscount: scrappedValue.priceDifference > 0,
+            discountPercentage: (
+              (scrappedValue.priceDifference / scrappedValue.originalPrice) *
+              100
+            ).toFixed(2),
+          },
+        },
+      };
+      var res = await new this.productModel(model).save();
+      return res;
+    }
   }
 
   async getPrices(productUrl: string): Promise<Product> {
@@ -171,6 +208,12 @@ export class ProductsService {
     const filteredProd: Product = await this.productModel
       .findOne(filter)
       .exec();
+
+    if (filteredProd === null)
+      throw new HttpException(
+        'ERROR.PRODUCT_NOT_FOUND',
+        HttpStatus.NOT_FOUND,
+      );
 
     let sellerExists: Boolean = false;
     for (let index = 0; index < filteredProd.sellers.length; index++) {

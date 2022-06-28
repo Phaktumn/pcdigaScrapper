@@ -1,6 +1,6 @@
 import { ConsoleLogger, Injectable } from '@nestjs/common';
 //import * as puppeteer from 'puppeteer';
-import { Browser, ElementHandle, LaunchOptions, Page } from 'puppeteer';
+import { Browser, ElementHandle, EvaluateFn, LaunchOptions, Page } from 'puppeteer';
 import { transformPricesToNumber } from 'src/common/utils';
 import * as randomUseragent from 'random-useragent';
 
@@ -19,7 +19,7 @@ export class ScraperService {
     const args = ['--no-sandbox', '--window-size=1920,1080'];
     const options: LaunchOptions = {
       args: args,
-      headless: true,
+      headless: false,
       ignoreHTTPSErrors: true,
     };
     
@@ -47,6 +47,7 @@ export class ScraperService {
     await page.goto(pageUrl, { waitUntil: 'networkidle2' });
 
     await page.screenshot({ path: 'teste.png', fullPage: true });
+
 
     while (true) {
       var res = await page.evaluate(() => {
@@ -111,7 +112,7 @@ export class ScraperService {
       );*/
 
       const image: NodeListOf<HTMLElement> = document.querySelectorAll(
-        '#__next > div.z-1.flex.flex-col.justify-between.min-h-screen > div.z-1.base-container.py-5.bg-background.pb-28.flex-grow > main > div.grid.lg\\:grid-cols-product-page.gap-x-6.w-full.items-start > div.max-w-full.min-w-full.mt-6 > div.p-4.bg-background-off.rounded-md.grid.gap-y-4 > div.hidden.md\\:block.relative > div.grid.grid-cols-2.grid-rows-2.gap-3 > div:nth-child(1) > div > img, #__next > div.z-1.flex.flex-col.justify-between.min-h-screen > div.z-1.base-container.py-5.bg-background.pb-28.flex-grow > main > div.grid.lg\\:grid-cols-product-page.gap-x-6.w-full.items-start > div.max-w-full.min-w-full.mt-6 > div.p-4.bg-background-off.rounded-md.grid.gap-y-4 > div.hidden.md\\:block.relative > div.image-container > div > img'
+        '#__next > div.z-1.flex.flex-col.justify-between.min-h-screen > div.z-1.base-container.py-5.bg-background.pb-28.flex-grow > main > div.grid.lg\\:grid-cols-product-page.gap-x-6.w-full.items-start > div.max-w-full.min-w-full.mt-6 > div.p-4.bg-background-off.rounded-md.grid.gap-y-4 > div.hidden.md\\:block.relative > div.grid > div:nth-child(1) > div > img, #__next > div.z-1.flex.flex-col.justify-between.min-h-screen > div.z-1.base-container.py-5.bg-background.pb-28.flex-grow > main > div.grid.lg\\:grid-cols-product-page.gap-x-6.w-full.items-start > div.max-w-full.min-w-full.mt-6 > div.p-4.bg-background-off.rounded-md.grid.gap-y-4 > div.hidden.md\\:block.relative > div.image-container > div > img'
       );
 
       const codeElems: NodeListOf<HTMLElement> = document.querySelectorAll(
