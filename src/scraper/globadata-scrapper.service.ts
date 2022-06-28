@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import * as puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-extra';
 import { transformPricesToNumber } from 'src/common/utils';
+
+// add stealth plugin and use defaults (all evasion techniques)
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+puppeteer.use(StealthPlugin());
 
 @Injectable()
 export class GlobalDataScraperService {
@@ -13,13 +17,13 @@ export class GlobalDataScraperService {
       try {
         browser = await puppeteer.launch({
           args: args,
-          //headless: true,
+          headless: true,
           executablePath: process.env.GOOGLE_CHROME_SHIM,
         });
       } catch (e) {
         browser = await puppeteer.launch({
           args: args,
-          //headless: true,
+          headless: true,
           executablePath: process.env.GOOGLE_CHROME_BIN,
         });
       }

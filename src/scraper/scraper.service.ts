@@ -19,7 +19,7 @@ export class ScraperService {
     const args = ['--no-sandbox', '--window-size=1920,1080'];
     const options: LaunchOptions = {
       args: args,
-      headless: false,
+      headless: true,
       ignoreHTTPSErrors: true,
     };
     
@@ -38,17 +38,11 @@ export class ScraperService {
         });
       }
     }
-    puppeteer.use;
 
     const page: Page = await browser.newPage();
     randomUseragent.getRandom();
     await page.setUserAgent(randomUseragent.getRandom());
-    
     await page.goto(pageUrl, { waitUntil: 'networkidle2' });
-
-    await page.screenshot({ path: 'teste.png', fullPage: true });
-
-
     while (true) {
       var res = await page.evaluate(() => {
         const isCaptcha = document.querySelector('div#cf-hcaptcha-container') !== null;
