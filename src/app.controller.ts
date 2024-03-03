@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, Query, Req } from '@nestjs/common';
+import { Controller, Delete, Get, HttpCode, Query, Req } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Product as ProductInterface } from './graphql/graphql-schema';
 import { Request } from 'express';
@@ -27,6 +27,12 @@ export class AppController {
   @Get('product')
   async getProduct(@Query('sku') sku: string): Promise<ProductInterface> {
     return await this.appService.getProduct(sku);
+  }
+
+  @Delete('product')
+  async deleteProduct(@Query('id') id: string)
+  {
+    return await this.appService.deleteProduct(id);
   }
 
   @Get('product/getAndCreate')

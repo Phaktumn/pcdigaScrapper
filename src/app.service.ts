@@ -23,12 +23,14 @@ export class AppService {
 
   async getProduct(sku: string): Promise<Product> {
     return await this.ProductsService.getProductBySku(sku);
-    //throw new HttpException("ERROR.NOT_IMPLEMENTED", HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  async deleteProduct(id: string): Promise<boolean> {
+    return await this.ProductsService.deleteProductById(id);
   }
 
   async getProductMatch(filter: any): Promise<Product[]> {
     return await this.ProductsService.getProductMatch(filter);
-    //throw new HttpException("ERROR.NOT_IMPLEMENTED", HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   async getProductBy(url: string, ean: string): Promise<Product | any> {

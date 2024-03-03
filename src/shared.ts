@@ -18,7 +18,6 @@ export const UpdatableProps = [
 ]
 
 export const IgnoredProps = {
-  _id: 0,
   'updatedAt': 0,
   'prices._id': 0,
   'prices.updatedAt': 0

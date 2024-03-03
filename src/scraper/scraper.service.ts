@@ -50,7 +50,7 @@ export class ScraperService {
         const isSeller = document.querySelector('#__next > * main') !== null
         return { Captcha: isCaptcha, Input: isInput, Seller: isSeller }
       });
-      console.log(res);
+
       if (!res.Captcha && !res.Input && !res.Seller || res.Captcha) {
         await page.setUserAgent(randomUseragent.getRandom());
         await page.reload({ waitUntil: 'networkidle2' });
@@ -87,18 +87,18 @@ export class ScraperService {
 
     const data = await page.evaluate(() => {
       const currentPrice: HTMLElement = document.querySelector(
-        '#__next > div.z-1.flex.flex-col.justify-between.min-h-screen > div.z-1.base-container.py-5.bg-background.pb-28.flex-grow > main > div.grid.lg\\:grid-cols-product-page.gap-x-6.w-full.items-start > div.w-full.mt-6.sticky.top-4.transition-transform.transition-top.duration-300.ease-out > div > div > div.grid.grid-flow-row.gap-y-1 > div > div.flex.gap-x-4.items-center > div'
+        '#body-overlay > div.flex.flex-col.justify-between.min-h-screen.z-1 > div.z-1.base-container.py-5.bg-background.pb-28.flex-grow > main > div.grid.items-start.w-full.lg\\:grid-cols-product-page.gap-x-6 > div.w-full.mt-6.sticky.top-4.transition-transform.transition-top.duration-300.ease-out > div > div > div.grid.grid-flow-row.gap-y-1 > div > div.flex.gap-x-4.items-center > div'
       );
 
       const originalPrice: HTMLElement = document.querySelector(
-        '#__next > div.z-1.flex.flex-col.justify-between.min-h-screen > div.z-1.base-container.py-5.bg-background.pb-28.flex-grow > main > div.grid.lg\\:grid-cols-product-page.gap-x-6.w-full.items-start > div.w-full.mt-6.sticky.top-4.transition-transform.transition-top.duration-300.ease-out > div > div > div.grid.grid-flow-row.gap-y-1 > div > div.flex.gap-x-4.items-center > div.pvpr-lh.undefined.flex.flex-col.justify-end.self-end > p',
+        '#body-overlay > div.flex.flex-col.justify-between.min-h-screen.z-1 > div.z-1.base-container.py-5.bg-background.pb-28.flex-grow > main > div.grid.items-start.w-full.lg\\:grid-cols-product-page.gap-x-6 > div.w-full.mt-6.sticky.top-4.transition-transform.transition-top.duration-300.ease-out > div > div > div.grid.grid-flow-row.gap-y-1 > div > div.flex.gap-x-4.items-center > div.pvpr-lh.undefined.flex.justify-end.self-end.flex-col > p'
       );
 
       //const priceDifference: HTMLElement =
       //  document.querySelector('.discount_value');
 
       const name: HTMLElement = document.querySelector(
-        '#__next > div.z-1.flex.flex-col.justify-between.min-h-screen > div.z-1.base-container.py-5.bg-background.pb-28.flex-grow > main > div.grid.lg\\:grid-cols-product-page.gap-x-6.w-full.items-start > div.w-full.mt-6.sticky.top-4.transition-transform.transition-top.duration-300.ease-out > div > div > h1',
+        '#body-overlay > div.flex.flex-col.justify-between.min-h-screen.z-1 > div.z-1.base-container.py-5.bg-background.pb-28.flex-grow > main > div.grid.items-start.w-full.lg\\:grid-cols-product-page.gap-x-6 > div.w-full.mt-6.sticky.top-4.transition-transform.transition-top.duration-300.ease-out > div > div > h1',
       );
 
       /*const ean: HTMLElement = document.querySelector(
@@ -106,12 +106,11 @@ export class ScraperService {
       );*/
 
       const image: NodeListOf<HTMLElement> = document.querySelectorAll(
-        '#__next > div.z-1.flex.flex-col.justify-between.min-h-screen > div.z-1.base-container.py-5.bg-background.pb-28.flex-grow > main > div.grid.lg\\:grid-cols-product-page.gap-x-6.w-full.items-start > div.max-w-full.min-w-full.mt-6 > div.p-4.bg-background-off.rounded-md.grid.gap-y-4 > div.hidden.md\\:block.relative > div.grid > div:nth-child(1) > div > img, #__next > div.z-1.flex.flex-col.justify-between.min-h-screen > div.z-1.base-container.py-5.bg-background.pb-28.flex-grow > main > div.grid.lg\\:grid-cols-product-page.gap-x-6.w-full.items-start > div.max-w-full.min-w-full.mt-6 > div.p-4.bg-background-off.rounded-md.grid.gap-y-4 > div.hidden.md\\:block.relative > div.image-container > div > img'
+        '#body-overlay > div.flex.flex-col.justify-between.min-h-screen.z-1 > div.z-1.base-container.py-5.bg-background.pb-28.flex-grow > main > div.grid.items-start.w-full.lg\\:grid-cols-product-page.gap-x-6 > div.max-w-full.mt-6 > div.p-4.bg-background-off.rounded-md.grid.gap-y-4 > div.hidden.md\\:block.relative > div > div > div > div > div > div > div > img'
       );
 
       const codeElems: NodeListOf<HTMLElement> = document.querySelectorAll(
-        //'#maincontent > div.columns > div > div.product.attribute-header > div.product.attribute-wrapper > div.product.attribute.partnumber > div.value',
-        '#__next > div.z-1.flex.flex-col.justify-between.min-h-screen > div.z-1.base-container.py-5.bg-background.pb-28.flex-grow > main > div:nth-child(1) > div.hidden > div > div.flex > div.flex.flex-col.gap-y-2.h-full.uppercase > div'
+        '#body-overlay > div.flex.flex-col.justify-between.min-h-screen.z-1 > div.z-1.base-container.py-5.bg-background.pb-28.flex-grow > main > div:nth-child(1) > div.hidden.lg\\:block > div > div.flex > div.flex.flex-col.gap-y-2.xxs\\:items-center.xxs\\:flex-row.h-full.uppercase > div'
       );
 
       return {
@@ -126,7 +125,6 @@ export class ScraperService {
         sku: codeElems[0]?.innerText.replace('PART-NUMBER:', '').trim(),
       };
     });
-    console.log(data);
     await browser.close();
     return {
       ...data,

@@ -26,8 +26,8 @@ export class ProductsService {
   ) { }
 
   /**
-   * ............{seller_name}.com/
-   * ............{seller_name}.pt/
+   * ...{seller_name}.com/
+   * ...seller_name}.pt/
    * https://www.pcdiga.com/
    * productUrl.slice(12).split('.')
    * ['pcdiga', 'com/...']
@@ -55,12 +55,10 @@ export class ProductsService {
   }
 
   async scrapeProducts(sku: string): Promise<Product> {
-    console.log(sku);
     const prod: Product = await this.productModel.findOne({ sku: sku });
     if (prod === null)
       throw new HttpException({ Error: 'ERROR.PRODUCT_NOT_FOUND', Param: 'SKU not present' }, 400);
     if (isOlderThan(new Date(prod.updatedAt), 12, 0)) {
-      console.log(prod);
       prod.sellers.forEach(element => {
         this.getPrices(element.url);
       });
@@ -78,6 +76,14 @@ export class ProductsService {
    */
   async getProductBySku(sku: string): Promise<Product> {
     return await this.productModel.findOne({ sku: sku }, IgnoredProps);
+  }
+
+  /**
+   * Remove um produto da lista
+   * @param id Id MongoDb do produto
+   */
+  async deleteProductById(id: string): Promise<boolean> {
+    return await this.productModel.deleteOne({_id: id}) !== null;
   }
 
   async productExists(sku: string): Promise<boolean> {
@@ -111,10 +117,7 @@ export class ProductsService {
             priceDifference: scrappedValue.priceDifference,
             date: dateformated,
             isOnDiscount: scrappedValue.priceDifference > 0,
-            discountPercentage: (
-              (scrappedValue.priceDifference / scrappedValue.originalPrice) *
-              100
-            ).toFixed(2),
+            discountPercentage: calculateDiscountPercentage(scrappedValue.priceDifference, scrappedValue.originalPrice),
           },
         },
       },
@@ -150,10 +153,7 @@ export class ProductsService {
             priceDifference: scrappedValue.priceDifference,
             date: dateformated,
             isOnDiscount: scrappedValue.priceDifference > 0,
-            discountPercentage: (
-              (scrappedValue.priceDifference / scrappedValue.originalPrice) *
-              100
-            ).toFixed(2),
+            discountPercentage: calculateDiscountPercentage(scrappedValue.priceDifference, scrappedValue.originalPrice),
           },
         },
       };
@@ -197,10 +197,7 @@ export class ProductsService {
             priceDifference: scrappedValue.priceDifference,
             date: dateformated,
             isOnDiscount: scrappedValue.priceDifference > 0,
-            discountPercentage: (
-              (scrappedValue.priceDifference / scrappedValue.originalPrice) *
-              100
-            ).toFixed(2),
+            discountPercentage: calculateDiscountPercentage(scrappedValue.priceDifference, scrappedValue.originalPrice),
           },
         },
       },
@@ -241,10 +238,7 @@ export class ProductsService {
             priceDifference: scrappedValue.priceDifference,
             date: dateformated,
             isOnDiscount: scrappedValue.priceDifference > 0,
-            discountPercentage: (
-              (scrappedValue.priceDifference / scrappedValue.originalPrice) *
-              100
-            ).toFixed(2),
+            discountPercentage: calculateDiscountPercentage(scrappedValue.priceDifference, scrappedValue.originalPrice),
           },
         },
       };
