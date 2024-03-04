@@ -20,10 +20,15 @@ RUN set -x \
   && rm -rf /var/cache/apk/* /root/.node-gyp /usr/share/man /tmp/* \
   && echo
 
-#RUN mkdir -p /opt/app
-#WORKDIR /opt/app
-#COPY src/package.json src/package-lock.json .
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
+WORKDIR /home/node/app
+COPY package*.json ./
+
+USER npm
+
 RUN npm install
-COPY src/ .
-#EXPOSE 3000
+
+#COPY src/ .
+COPY . .
+
 CMD [ "npm", "run start:prod"]
