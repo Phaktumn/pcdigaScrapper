@@ -1,8 +1,8 @@
 FROM node:14-alpine as development
 
 # Install system packages for puppeteer NPM dependency
-RUN apk add -y update \
-  && apk add -y install --no-install-recommends \
+RUN apk update \
+  && apk add --virtual \
   ca-certificates \
   fonts-liberation \
   libasound2 \
@@ -39,7 +39,6 @@ RUN apk add -y update \
   lsb-release \
   wget \
   xdg-utils \
-  && apk add clean \
   && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src/app
