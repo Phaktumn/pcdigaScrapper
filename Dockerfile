@@ -29,6 +29,8 @@ COPY package.json /usr/src/app/
 COPY tsconfig.build.json /usr/src/app/
 COPY tsconfig.json /usr/src/app/
 
+COPY . .
+
 RUN npm install
 RUN npm run build
 
