@@ -16,7 +16,7 @@ puppeteer.use(StealthPlugin());
 export class ScraperService {
   async pageScraping(pageUrl: string) {
     let browser: Browser = null;
-    const args = ['--no-sandbox', '--window-size=1920,1080'];
+    const args = ['--no-sandbox', '--disable-setuid-sandbox', '--window-size=1920,1080'];
     const options: LaunchOptions = {
       args: args,
       headless: true,
