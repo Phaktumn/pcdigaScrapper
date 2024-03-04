@@ -20,23 +20,21 @@ RUN set -x \
   && rm -rf /var/cache/apk/* /root/.node-gyp /usr/share/man /tmp/* \
   && echo
 
-#RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
-#WORKDIR /home/node/app
 # Create app directory
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+#RUN mkdir -p /usr/src/app
+#WORKDIR /usr/src/app
 
 # Install app dependencies
-COPY package.json /usr/src/app/
-COPY tsconfig.build.json /usr/src/app/
-COPY tsconfig.json /usr/src/app/
+#COPY package.json /usr/src/app/
+#COPY tsconfig.build.json /usr/src/app/
+#COPY tsconfig.json /usr/src/app/
 
 RUN npm install
 RUN npm run build
 
 # Bundle app source
-COPY . /usr/src/app
+#COPY . /usr/src/app
 
 EXPOSE 3000
 
-CMD [ "npm", "run start:prod"]
+CMD [ "npm", "run start:prod" ]
