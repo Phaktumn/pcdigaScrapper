@@ -28,6 +28,9 @@ RUN set -x \
 #COPY package.json /usr/src/app/
 #COPY tsconfig.build.json /usr/src/app/
 #COPY tsconfig.json /usr/src/app/
+COPY package.json .
+COPY tsconfig.build.json .
+COPY tsconfig.json .
 
 RUN npm install
 RUN npm run build
