@@ -20,10 +20,9 @@ RUN set -x \
   && rm -rf /var/cache/apk/* /root/.node-gyp /usr/share/man /tmp/* \
   && echo
 
-RUN dir
-RUN mkdir -p /opt/app
-WORKDIR /opt/app
-COPY src/package.json src/package-lock.json .
+#RUN mkdir -p /opt/app
+#WORKDIR /opt/app
+#COPY src/package.json src/package-lock.json .
 RUN npm install
 COPY src/ .
 #EXPOSE 3000
