@@ -1,42 +1,27 @@
 FROM node:14-alpine as development
 
-# Install system packages for puppeteer NPM dependency
-RUN apk update \
-  && apk add --no-cache --virtual \
-  ca-certificates \
-  fonts-liberation \
-  libasound2 \
-  libatk-bridge2.0-0 \
-  libatk1.0-0 \
-  libc6 \
-  libcairo2 \
-  libcups2 \
-  libdbus-1-3 \
-  libexpat1 \
-  libfontconfig1 \
-  libgbm1 \
-  libgcc1 \
-  libglib2.0-0 \
-  libgtk-3-0 \
-  libnspr4 \
-  libnss3 \
-  libpango-1.0-0 \
-  libpangocairo-1.0-0 \
-  libstdc++6 \
-  libx11-6 \
-  libx11-xcb1 \
-  libxcb1 \
-  libxcomposite1 \
-  libxcursor1 \
-  libxdamage1 \
-  libxext6 \
-  libxfixes3 \
-  libxi6 \
-  libxrandr2 \
-  libxrender1 \
-  libxss1 \
-  libxtst6 \
-  lsb-release \
-  wget \
-  xdg-utils \
-  && rm -rf /var/lib/apt/lists/*
+ENV CHROME_BIN="/usr/bin/chromium-browser"\
+    PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true"
+
+RUN set -x \
+  && apk update \
+  && apk upgrade \
+  # replacing default repositories with edge ones
+  && echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" > /etc/apk/repositories \
+  && echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
+  && echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
+  \
+  # Add the packages
+  && apk add --no-cache dumb-init curl make gcc g++ python linux-headers binutils-gold gnupg libstdc++ nss chromium \
+  \
+  && npm install puppeteer@0.13.0 \
+  \
+  # Do some cleanup
+  && apk del --no-cache make gcc g++ python binutils-gold gnupg libstdc++ \
+  && rm -rf /usr/include \
+  && rm -rf /var/cache/apk/* /root/.node-gyp /usr/share/man /tmp/* \
+  && echo
+
+ENTRYPOINT ["/usr/bin/dumb-init"]
+
+CMD node
