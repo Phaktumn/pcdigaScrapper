@@ -59,13 +59,13 @@ export class ProductsService {
     if (prod === null)
       throw new HttpException({ Error: 'ERROR.PRODUCT_NOT_FOUND', Param: 'SKU not present' }, 400);
     if (isOlderThan(new Date(prod.updatedAt), 12, 0)) {
-      prod.sellers.forEach(element => {
-        this.getPrices(element.url);
-      });
+      for (const seller of prod.sellers) {
+        await this.getPrices(seller.url);
+      }
       return await this.productModel.findOne({ sku: sku });
     }
     else {
-      throw new HttpException(`ERROR.CANT_PROCESS_NOW Wait atleast 12h before updating again. Last update ${prod.updatedAt}`, HttpStatus.PRECONDITION_FAILED)
+      throw new HttpException(`ERROR.CANT_PROCESS_NOW Wait at least 12h before updating again. Last update ${prod.updatedAt}`, HttpStatus.PRECONDITION_FAILED)
     }
   }
 
@@ -83,7 +83,7 @@ export class ProductsService {
    * @param id Id MongoDb do produto
    */
   async deleteProductById(id: string): Promise<boolean> {
-    return await this.productModel.deleteOne({_id: id}) !== null;
+    return await this.productModel.deleteOne({ _id: id }) !== null;
   }
 
   async productExists(sku: string): Promise<boolean> {
@@ -126,16 +126,16 @@ export class ProductsService {
       .findOne(filter)
       .exec();
     if (filteredProd !== null) {
-      if (filteredProd.sellers.find(seller => seller.name === sellerName)){
+      if (filteredProd.sellers.find(seller => seller.name === sellerName)) {
         throw new HttpException(
           'ERROR.PARAM_NOT_VALID: Seller already exists',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
       else {
-         return await this.productModel
-        .findOneAndUpdate(filter, update, { new: true })
-        .exec();
+        return await this.productModel
+          .findOneAndUpdate(filter, update, { new: true })
+          .exec();
       }
     }
     else {
@@ -168,7 +168,7 @@ export class ProductsService {
 
     if (!scrappedValue.currentPrice)
       throw new HttpException(
-        'ERROR.COULDNT_CREATE_PRODUCT',
+        'ERROR.COULD_NOT_CREATE_PRODUCT',
         HttpStatus.NOT_FOUND,
       );
     var now = new Date(Date.now());
@@ -244,10 +244,13 @@ export class ProductsService {
       };
       const arrayFilters = [{ 'elem.name': sellerName }];
       product = await this.productModel
-        .findOneAndUpdate(filter, update, {
-          arrayFilters: arrayFilters,
-          new: true,
-        })
+        .findOneAndUpdate(
+          filter,
+          update,
+          {
+            arrayFilters: arrayFilters,
+            new: true
+          })
         .exec();
     }
 
