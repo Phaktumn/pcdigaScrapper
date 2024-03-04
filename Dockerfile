@@ -20,9 +20,9 @@ RUN set -x \
   && rm -rf /var/cache/apk/* /root/.node-gyp /usr/share/man /tmp/* \
   && echo
 
-ENTRYPOINT ["/usr/bin/dumb-init"]
+# ENTRYPOINT ["/usr/bin/dumb-init"]
 
-CMD node
+# CMD node
 
 # WORKDIR /usr/src/app
 
