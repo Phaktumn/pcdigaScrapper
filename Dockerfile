@@ -2,7 +2,7 @@ FROM node:14-alpine as development
 
 # Install system packages for puppeteer NPM dependency
 RUN apk update \
-  && apk add --virtual \
+  && apk add --no-cache --virtual \
   ca-certificates \
   fonts-liberation \
   libasound2 \
