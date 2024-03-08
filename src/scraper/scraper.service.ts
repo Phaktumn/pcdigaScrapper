@@ -16,9 +16,8 @@ puppeteer.use(StealthPlugin());
 export class ScraperService {
   async pageScraping(pageUrl: string) {
     let browser: Browser = null;
-    const args = ['--no-sandbox', '--disable-setuid-sandbox' ];
+    const args = ['--disable-setuid-sandbox', '--no-sandbox' ];
     const options: LaunchOptions = {
-      executablePath: '/usr/bin/chromium-browser',
       args: args,
       headless: true,
       ignoreHTTPSErrors: true,

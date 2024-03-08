@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { LaunchOptions } from 'puppeteer';
 import puppeteer from 'puppeteer-extra';
 import { transformPricesToNumber } from 'src/common/utils';
 
@@ -10,20 +11,23 @@ puppeteer.use(StealthPlugin());
 export class GlobalDataScraperService {
   async pageScraping(pageUrl: string) {
     let browser = null;
-    const args = ['--no-sandbox'];
+    const args = ['--disable-setuid-sandbox', '--no-sandbox' ];
+    const options: LaunchOptions = {
+      args: args,
+      headless: true,
+      ignoreHTTPSErrors: true,
+    };
     if (!process.env.GOOGLE_CHROME_SHIM) {
-      browser = await puppeteer.launch({ headless: true });
+      browser = await puppeteer.launch({ ...options });
     } else {
       try {
         browser = await puppeteer.launch({
-          args: args,
-          headless: true,
+          ...options,
           executablePath: process.env.GOOGLE_CHROME_SHIM,
         });
       } catch (e) {
         browser = await puppeteer.launch({
-          args: args,
-          headless: true,
+          ...options,
           executablePath: process.env.GOOGLE_CHROME_BIN,
         });
       }
