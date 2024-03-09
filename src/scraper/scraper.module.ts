@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { NestCrawlerModule } from 'nest-crawler';
 import { GlobalDataScraperService } from './globadata-scrapper.service';
-import { ScraperService } from './scraper.service';
+import { ScraperService } from './ScraperService';
 
 @Module({
   providers: [ScraperService, GlobalDataScraperService],

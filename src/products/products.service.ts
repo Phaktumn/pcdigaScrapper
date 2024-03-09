@@ -8,7 +8,7 @@ import {
   isOlderThan,
 } from 'src/common/utils';
 import { Product } from 'src/graphql/graphql-schema';
-import { ScraperService } from 'src/scraper/scraper.service';
+import { ScraperService } from 'src/scraper/ScraperService';
 import { ENTITIES_KEY, IgnoredProps, SELLER_NAMES } from 'src/shared';
 import * as _ from 'lodash';
 import { ThirdPartyEmailService } from 'src/third-party/third-party.service';

@@ -2,43 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { LaunchOptions } from 'puppeteer';
 import puppeteer from 'puppeteer-extra';
 import { transformPricesToNumber } from 'src/common/utils';
+import { ScrapperServiceBase } from './scraper.servicebase';
 
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 
 @Injectable()
-export class GlobalDataScraperService {
+export class GlobalDataScraperService extends ScrapperServiceBase {
   async pageScraping(pageUrl: string) {
-    let browser = null;
-    const args = ['--disable-setuid-sandbox', '--no-sandbox' ];
-    const options: LaunchOptions = {
-      args: args,
-      headless: true,
-      ignoreHTTPSErrors: true,
-    };
-    if (!process.env.GOOGLE_CHROME_SHIM) {
-      browser = await puppeteer.launch({ ...options });
-    } else {
-      try {
-        browser = await puppeteer.launch({
-          ...options,
-          executablePath: process.env.GOOGLE_CHROME_SHIM,
-        });
-      } catch (e) {
-        browser = await puppeteer.launch({
-          ...options,
-          executablePath: process.env.GOOGLE_CHROME_BIN,
-        });
-      }
-    }
-    const page = await browser.newPage();
-    await page.setUserAgent(
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36',
-    );
-    await page.goto(pageUrl, { waitUntil: 'networkidle2' });
+    super.CreateBrowser();
+    super.GoTo(pageUrl);
 
-    const data = await page.evaluate(() => {
+    const data = await this.page.evaluate(() => {
 
       const currentPrice: HTMLElement = document.querySelector(
         'body > main > div.main-container > div.bg-white.pb-4.mb-4 > div:nth-child(2) > div > ck-product-cta-box > div > * > span > span.price__amount'
@@ -73,7 +49,7 @@ export class GlobalDataScraperService {
         sku: !sku ? "SKU FAILED" : sku.innerText.replace('SKU', '').trim(),
       };
     });
-    await browser.close();
+    await this.browser.close();
     return {
       ...data,
       currentPrice: transformPricesToNumber(data.currentPrice),
