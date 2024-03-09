@@ -12,50 +12,47 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 
 export interface IScrapperServiceBase {
-    CreateBrowser() : Promise<Browser>;
-    GoTo(pageUrl: string) : Promise<Page>;
+    CreateBrowser(): Promise<Browser>;
+    GoTo(pageUrl: string, browser: Browser): Promise<Page>;
 }
 
 export class ScrapperServiceBase implements IScrapperServiceBase {
-    public browser: Browser = null;
-    public page: Page = null;
-
     args = ['--disable-setuid-sandbox', '--no-sandbox'];
     options: LaunchOptions = {
         args: this.args,
         headless: true,
         ignoreHTTPSErrors: true,
-      };
-
-    async GoTo(pageUrl: string) : Promise<Page> {
-        if (this.browser === undefined) {
-            this.browser = await this.CreateBrowser();
+        defaultViewport: {
+            width: 1920,
+            height: 1080
         }
-        this.page = await this.browser.newPage();
+    };
+    async GoTo(pageUrl: string, browser: Browser): Promise<Page> {
+        if (browser === null) {
+            browser = await this.CreateBrowser();
+        }
+        var page = await browser.newPage();
         randomUseragent.getRandom();
-        await this.page.setUserAgent(randomUseragent.getRandom());
-        await this.page.goto(pageUrl, { waitUntil: 'networkidle2' });
-        return this.page;
+        await page.setUserAgent(randomUseragent.getRandom());
+        await page.goto(pageUrl, { waitUntil: 'networkidle2' });
+        return page;
     }
-    async CreateBrowser() : Promise<Browser> {
-        this.browser = null;
-    
+    async CreateBrowser(): Promise<Browser> {
+        let browser: Browser;
         if (!process.env.GOOGLE_CHROME_SHIM) {
-            this.browser = await puppeteer.launch({ ...this.options });
+            browser = await puppeteer.launch({ ...this.options });
         } else {
-          try {
-            this.browser = await puppeteer.launch({
-              ...this.options,
-              executablePath: process.env.GOOGLE_CHROME_SHIM,
+            browser = await puppeteer.launch({
+                ...this.options,
+                executablePath: process.env.GOOGLE_CHROME_BIN,
             });
-          } catch (e) {
-            this.browser = await puppeteer.launch({
-              ...this.options,
-              executablePath: process.env.GOOGLE_CHROME_BIN,
-            });
-          }
         }
-
-        return this.browser;
+        return browser;
     }
+
+    ReplaceAll = function(original: string, strReplace: string, strWith: string): string {
+        var esc = strReplace.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+        var reg = new RegExp(esc, 'ig');
+        return original.replace(reg, strWith);
+      };
 }
