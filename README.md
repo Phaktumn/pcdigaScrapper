@@ -2,10 +2,6 @@
 
 This is a web scraper to watch and registe the price oscillation in the Pc Diga website. I made this project to know when to buy the products I was interested in.
 
-## How does it work 
-
-![How does it work](https://cdn.discordapp.com/attachments/946807027462705172/980478083746385920/how-does-it-work.png)
-
 *When the scraper is called the data is saved on the database*
 ## Built With
 
