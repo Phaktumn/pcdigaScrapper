@@ -1,7 +1,3 @@
-[![Stargazers][stars-shield]][stars-url]
-![MIT License][license-shield]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-
 ## About the project
 
 This is a web scraper to watch and registe the price oscillation in the Pc Diga website. I made this project to know when to buy the products I was interested in.
@@ -59,19 +55,4 @@ _These are the steps to install and use the scraper_
     npm run start:dev
     ```
 
-## Proof of work
-
-![data](https://cdn.discordapp.com/attachments/946807027462705172/980484074365943818/unknown.png)
-
-
 ## License
-
-Distributed under the MIT License. See `LICENSE.txt` for more information.
-
-
-[stars-shield]: https://img.shields.io/github/stars/flav1o/scraper-pcdiga.svg?style=for-the-badge
-[stars-url]: https://github.com/flav1o/scraper-pcdiga/stargazers
-[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
-[license-url]: https://github.com/flav1o/scraper-pcdiga/blob/main/LICENSE
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://www.linkedin.com/in/flav1o/
