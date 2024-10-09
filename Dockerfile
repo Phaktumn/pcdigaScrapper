@@ -1,30 +1,28 @@
-FROM node:14-alpine as development
+FROM node:14-alpine
 
+# We don't need the standalone Chromium
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true"
+ENV PUPPETEER_EXECUTABLE_PATH="/usr/bin/chromium-browser"
+
+RUN apk add --no-cache  chromium --repository=http://dl-cdn.alpinelinux.org/alpine/v3.10/main
+
+# Create app directory
+RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-COPY package*.json ./
-
-RUN npm install glob rimraf 
-
-RUN npm install 
+# Install app dependencies
+COPY package*.json /usr/src/app/
+COPY tsconfig.build.json /usr/src/app/
+COPY tsconfig.json /usr/src/app/
 
 COPY . .
 
+RUN npm install --force
 RUN npm run build
 
-FROM node:14-alpine as production
+# Bundle app source
+COPY . /usr/src/app
 
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
+EXPOSE 5000
 
-WORKDIR /usr/src/app
-
-COPY package*.json ./
-
-RUN npm install --only=production
-
-COPY . .
-
-COPY --from=development /usr/src/app/dist ./dist
-
-CMD ["node", "dist/main"]
+CMD [ "npm", "run", "start:prod" ]

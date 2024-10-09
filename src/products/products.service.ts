@@ -8,7 +8,7 @@ import {
   isOlderThan,
 } from 'src/common/utils';
 import { Product } from 'src/graphql/graphql-schema';
-import { ScraperService } from 'src/scraper/scraper.service';
+import { ScraperService } from 'src/scraper/ScraperService';
 import { ENTITIES_KEY, IgnoredProps, SELLER_NAMES } from 'src/shared';
 import * as _ from 'lodash';
 import { ThirdPartyEmailService } from 'src/third-party/third-party.service';
@@ -30,8 +30,8 @@ export class ProductsService {
   ) { }
 
   /**
-   * ............{seller_name}.com/
-   * ............{seller_name}.pt/
+   * ...{seller_name}.com/
+   * ...seller_name}.pt/
    * https://www.pcdiga.com/
    * productUrl.slice(12).split('.')
    * ['pcdiga', 'com/...']
@@ -71,14 +71,13 @@ export class ProductsService {
     if (prod === null)
       throw new HttpException({ Error: 'ERROR.PRODUCT_NOT_FOUND', Param: 'SKU not present' }, 400);
     if (isOlderThan(new Date(prod.updatedAt), 12, 0)) {
-      for (let index = 0; index < prod.sellers.length; index++) {
-        const element = prod.sellers[index];
-        await this.getPrices(element.url);
+      for (const seller of prod.sellers) {
+        await this.getPrices(seller.url);
       }
       return await this.productModel.findOne({ sku: sku });
     }
     else {
-      throw new HttpException(`Wait atleast 12h before updating again. Last update ${prod.updatedAt}`, HttpStatus.PRECONDITION_FAILED)
+      throw new HttpException(`ERROR.CANT_PROCESS_NOW Wait at least 12h before updating again. Last update ${prod.updatedAt}`, HttpStatus.PRECONDITION_FAILED)
     }
   }
 
@@ -89,6 +88,14 @@ export class ProductsService {
    */
   async getProductBySku(sku: string): Promise<Product> {
     return await this.productModel.findOne({ sku: sku }, IgnoredProps);
+  }
+
+  /**
+   * Remove um produto da lista
+   * @param id Id MongoDb do produto
+   */
+  async deleteProductById(id: string): Promise<boolean> {
+    return await this.productModel.deleteOne({ _id: id }) !== null;
   }
 
   async productExists(sku: string): Promise<boolean> {
@@ -122,11 +129,7 @@ export class ProductsService {
             priceDifference: scrappedValue.priceDifference,
             date: dateformated,
             isOnDiscount: scrappedValue.priceDifference > 0,
-            available: scrappedValue.available,
-            discountPercentage: (
-              (scrappedValue.priceDifference / scrappedValue.originalPrice) *
-              100
-            ).toFixed(2),
+            discountPercentage: calculateDiscountPercentage(scrappedValue.priceDifference, scrappedValue.originalPrice),
           },
         },
       },
@@ -135,16 +138,16 @@ export class ProductsService {
       .findOne(filter)
       .exec();
     if (filteredProd !== null) {
-      if (filteredProd.sellers.find(seller => seller.name === sellerName)){
+      if (filteredProd.sellers.find(seller => seller.name === sellerName)) {
         throw new HttpException(
           'ERROR.PARAM_NOT_VALID: Seller already exists',
           HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
       else {
-         return await this.productModel
-        .findOneAndUpdate(filter, update, { new: true })
-        .exec();
+        return await this.productModel
+          .findOneAndUpdate(filter, update, { new: true })
+          .exec();
       }
     }
     else {
@@ -162,10 +165,7 @@ export class ProductsService {
             priceDifference: scrappedValue.priceDifference,
             date: dateformated,
             isOnDiscount: scrappedValue.priceDifference > 0,
-            discountPercentage: (
-              (scrappedValue.priceDifference / scrappedValue.originalPrice) *
-              100
-            ).toFixed(2),
+            discountPercentage: calculateDiscountPercentage(scrappedValue.priceDifference, scrappedValue.originalPrice),
           },
         },
       };
@@ -180,7 +180,7 @@ export class ProductsService {
 
     if (!scrappedValue.currentPrice)
       throw new HttpException(
-        'ERROR.COULDNT_CREATE_PRODUCT',
+        'ERROR.COULD_NOT_CREATE_PRODUCT',
         HttpStatus.NOT_FOUND,
       );
     var now = new Date(Date.now());
@@ -209,10 +209,7 @@ export class ProductsService {
             priceDifference: scrappedValue.priceDifference,
             date: dateformated,
             isOnDiscount: scrappedValue.priceDifference > 0,
-            discountPercentage: (
-              (scrappedValue.priceDifference / scrappedValue.originalPrice) *
-              100
-            ).toFixed(2),
+            discountPercentage: calculateDiscountPercentage(scrappedValue.priceDifference, scrappedValue.originalPrice),
           },
         },
       },
@@ -253,19 +250,19 @@ export class ProductsService {
             priceDifference: scrappedValue.priceDifference,
             date: dateformated,
             isOnDiscount: scrappedValue.priceDifference > 0,
-            discountPercentage: (
-              (scrappedValue.priceDifference / scrappedValue.originalPrice) *
-              100
-            ).toFixed(2),
+            discountPercentage: calculateDiscountPercentage(scrappedValue.priceDifference, scrappedValue.originalPrice),
           },
         },
       };
       const arrayFilters = [{ 'elem.name': sellerName }];
       product = await this.productModel
-        .findOneAndUpdate(filter, update, {
-          arrayFilters: arrayFilters,
-          new: true,
-        })
+        .findOneAndUpdate(
+          filter,
+          update,
+          {
+            arrayFilters: arrayFilters,
+            new: true
+          })
         .exec();
     }
 

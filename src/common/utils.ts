@@ -6,7 +6,7 @@ export const transformPricesToNumber = (price: string): number =>
 export const calculateDiscountPercentage = (
   priceDifference: number,
   originalPrice: number,
-): number => +((priceDifference / originalPrice) * 100).toFixed(2);
+): number => +((priceDifference / (originalPrice === 0 ? 1 : originalPrice)) * 100).toFixed(2);
 
 export const isOlderThan24Hours = (lastUpdateDate: Date): boolean => {
   return lastUpdateDate.getTime() < Date.now() - 86400000;
