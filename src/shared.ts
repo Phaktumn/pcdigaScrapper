@@ -9,7 +9,8 @@ export enum ENTITIES_KEY {
 
 export enum SELLER_NAMES {
   GLOBAL_DATA = 'globaldata',
-  PC_DIGA = 'pcdiga'
+  PC_DIGA = 'pcdiga',
+  VODAFONE = 'vodafone'
 }
 
 export const UpdatableProps = [

@@ -126,7 +126,6 @@ export class ScraperService {
         sku: codeElems[0]?.innerText.replace('PART-NUMBER:', '').trim(),
       };
     });
-    console.log(data);
     await browser.close();
     return {
       ...data,

@@ -13,6 +13,10 @@ export class AppService {
     return 'Welcome';
   }
   
+  async validate(url: string): Promise<any> {
+    return await this.ProductsService.validateUrl(url);
+  }
+
   async create(url: string): Promise<Product> {
     return await this.ProductsService.createProduct(url);
   }

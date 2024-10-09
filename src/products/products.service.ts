@@ -14,6 +14,9 @@ import * as _ from 'lodash';
 import { ThirdPartyEmailService } from 'src/third-party/third-party.service';
 import { GlobalDataScraperService } from 'src/scraper/globadata-scrapper.service';
 import { Seller } from 'src/graphql-schema';
+import { VodafoneIphone16DataScraperService } from 'src/scraper/vodafone-scrapper.service';
+
+var qs = require('qs');
 
 @Injectable()
 export class ProductsService {
@@ -22,6 +25,7 @@ export class ProductsService {
     private productModel: Model<Product>,
     private scraperService: ScraperService,
     private globalDataScraperService: GlobalDataScraperService,
+    private vodafoneIphone16ScraperService: VodafoneIphone16DataScraperService,
     private readonly sendgridService: ThirdPartyEmailService,
   ) { }
 
@@ -37,7 +41,6 @@ export class ProductsService {
    */
   async validateUrl(productUrl: string) {
     var sellerName = productUrl.slice(12).split('.')[0];
-    console.log(sellerName);
     var scrappedValue: any = {};
     switch (sellerName) {
       case SELLER_NAMES.GLOBAL_DATA:
@@ -48,6 +51,15 @@ export class ProductsService {
       case SELLER_NAMES.PC_DIGA:
         scrappedValue = await this.scraperService.pageScraping(productUrl);
         break;
+      case SELLER_NAMES.VODAFONE:
+        const [, params] = productUrl.split('?');
+        const decUrl = decodeURI(params);
+        const parsedParams = qs.parse(decUrl);
+        let color = parsedParams.color.toString();
+        let storage = parsedParams.storage.toString();
+        //color=titânio%20branco&storage=128
+        scrappedValue = await this.vodafoneIphone16ScraperService.pageScraping(productUrl, storage, color)
+        break;
       default:
         throw new HttpException('ERROR.SELLER_NOT_FOUND', HttpStatus.NOT_FOUND);
     }
@@ -55,19 +67,18 @@ export class ProductsService {
   }
 
   async scrapeProducts(sku: string): Promise<Product> {
-    console.log(sku);
     const prod: Product = await this.productModel.findOne({ sku: sku });
     if (prod === null)
       throw new HttpException({ Error: 'ERROR.PRODUCT_NOT_FOUND', Param: 'SKU not present' }, 400);
     if (isOlderThan(new Date(prod.updatedAt), 12, 0)) {
-      console.log(prod);
-      prod.sellers.forEach(element => {
-        this.getPrices(element.url);
-      });
+      for (let index = 0; index < prod.sellers.length; index++) {
+        const element = prod.sellers[index];
+        await this.getPrices(element.url);
+      }
       return await this.productModel.findOne({ sku: sku });
     }
     else {
-      throw new HttpException(`ERROR.CANT_PROCESS_NOW Wait atleast 12h before updating again. Last update ${prod.updatedAt}`, HttpStatus.PRECONDITION_FAILED)
+      throw new HttpException(`Wait atleast 12h before updating again. Last update ${prod.updatedAt}`, HttpStatus.PRECONDITION_FAILED)
     }
   }
 
@@ -111,6 +122,7 @@ export class ProductsService {
             priceDifference: scrappedValue.priceDifference,
             date: dateformated,
             isOnDiscount: scrappedValue.priceDifference > 0,
+            available: scrappedValue.available,
             discountPercentage: (
               (scrappedValue.priceDifference / scrappedValue.originalPrice) *
               100

@@ -12,6 +12,12 @@ export class AppController {
     return this.appService.getHello();
   }
 
+  @Get('validate')
+  async validateurl(@Query('url') url: string): Promise<any>
+  {
+    return await this.appService.validate(url);
+  }
+
   @Get('product/create')
   async createProduct(@Query('url') url: string): Promise<ProductInterface>
   {
