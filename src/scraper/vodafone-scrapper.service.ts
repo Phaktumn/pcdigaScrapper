@@ -1,39 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import puppeteer from 'puppeteer-extra';
 import { transformPricesToNumber } from 'src/common/utils';
+import { ScrapperServiceBase } from './scraper.servicebase';
 
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 
 @Injectable()
-export class VodafoneIphone16DataScraperService {
+export class VodafoneIphone16DataScraperService extends ScrapperServiceBase  {
+    delay(ms: number) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
     async pageScraping(pageUrl: string, capacity: string, color: string) {
-        let browser = null;
         const args = ['--no-sandbox'];
-        if (!process.env.GOOGLE_CHROME_SHIM) {
-            browser = await puppeteer.launch({ headless: true });
-        } else {
-            try {
-                browser = await puppeteer.launch({
-                    args: args,
-                    headless: true,
-                    executablePath: process.env.GOOGLE_CHROME_SHIM,
-                });
-            } catch (e) {
-                browser = await puppeteer.launch({
-                    args: args,
-                    headless: true,
-                    executablePath: process.env.GOOGLE_CHROME_BIN,
-                });
-            }
-        }
-        const page = await browser.newPage();
-        await page.setUserAgent(
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36',
-        );
-        await page.goto(pageUrl, { waitUntil: ['domcontentloaded', 'networkidle2'] });
-
+        var browser = await this.CreateBrowser();
+        let page = await this.GoTo(pageUrl, browser);
+        await this.delay(10000);
         const data = await page.evaluate((str: string, clr: string) => {
             const currentPrice: HTMLElement = document.querySelector('#priceModuleComp > div:nth-child(2) > div > div > div > div > div:nth-child(1) > form > div.price-module-options > div > label');
 

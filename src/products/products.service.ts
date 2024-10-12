@@ -8,13 +8,13 @@ import {
   isOlderThan,
 } from 'src/common/utils';
 import { Product } from 'src/graphql/graphql-schema';
-import { ScraperService } from 'src/scraper/ScraperService';
 import { ENTITIES_KEY, IgnoredProps, SELLER_NAMES } from 'src/shared';
 import * as _ from 'lodash';
 import { ThirdPartyEmailService } from 'src/third-party/third-party.service';
 import { GlobalDataScraperService } from 'src/scraper/globadata-scrapper.service';
 import { Seller } from 'src/graphql-schema';
 import { VodafoneIphone16DataScraperService } from 'src/scraper/vodafone-scrapper.service';
+import { ScraperService } from 'src/scraper/scraperService';
 
 var qs = require('qs');
 
@@ -63,6 +63,7 @@ export class ProductsService {
       default:
         throw new HttpException('ERROR.SELLER_NOT_FOUND', HttpStatus.NOT_FOUND);
     }
+    this.sendgridService.sendIsAvailbale(scrappedValue.name, productUrl, scrappedValue.available);
     return { sellerName, scrappedValue };
   }
 
